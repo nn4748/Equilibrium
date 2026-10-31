@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { themeBootScript } from "@/state/theme";
+import { ServiceWorker } from "@/features/shell/service-worker";
 import { ThemeSync } from "@/features/shell/theme-sync";
 import "./globals.css";
 
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
   applicationName: "Equilibrium",
   authors: [{ name: "Nourah Aleissa" }],
   creator: "Nourah Aleissa",
+  // Home-screen app on iOS: full screen, own title, opaque status bar.
+  appleWebApp: { capable: true, title: "Equilibrium", statusBarStyle: "black" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -42,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="grain">
         <ThemeSync />
+        <ServiceWorker />
         {children}
       </body>
     </html>

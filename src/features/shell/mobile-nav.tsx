@@ -18,8 +18,8 @@ const secondary = NAV.filter((n) => !(MOBILE_PRIMARY as readonly string[]).inclu
 export function MobileTopBar({ className }: { className?: string }) {
   const openPalette = useUI((s) => s.setPaletteOpen);
   return (
-    <header className={cn("sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md", className)}>
-      <div className="flex h-14 items-center justify-between gap-3 px-4 pt-[env(safe-area-inset-top)]">
+    <header className={cn("sticky top-0 z-30 border-b border-line bg-bg/85 pt-[env(safe-area-inset-top)] backdrop-blur-md", className)}>
+      <div className="flex h-14 items-center justify-between gap-3 px-4">
         <Wordmark />
         <div className="flex items-center gap-1">
           <DateReadout className="mr-2 hidden xs:flex" />

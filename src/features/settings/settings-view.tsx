@@ -10,6 +10,7 @@ import { Segmented, Switch } from "@/ui/controls";
 import { Select } from "@/ui/field";
 import { Dialog } from "@/ui/overlay";
 import { Page, PageHeader } from "@/ui/page";
+import { InstallApp } from "./install-app";
 import { toast } from "@/ui/toast";
 
 const THEMES = [
@@ -105,6 +106,12 @@ export function SettingsView() {
       <PageHeader index={7} section="Settings" title="Settings" />
 
       <div className="max-w-4xl">
+        <Group id="app" title="App">
+          <Row title="Add to home screen" description="Install Equilibrium to open it full screen, like an app. Works offline — your data stays on this device.">
+            <InstallApp />
+          </Row>
+        </Group>
+
         <Group id="appearance" title="Appearance">
           <Row title="Theme" description="System follows your device setting.">
             <Segmented label="Theme" options={THEMES} value={preference} onChange={setPreference} />
