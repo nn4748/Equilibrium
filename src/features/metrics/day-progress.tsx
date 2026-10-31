@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useData } from "@/state/store";
 import { Label } from "@/ui/typography";
+import { t } from "@/i18n";
 
 /** How far through the (shifted) day we are, on a 24-hour ruler. */
 export function DayProgress({ className }: { className?: string }) {
@@ -24,12 +25,12 @@ export function DayProgress({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between">
-        <Label>Day elapsed</Label>
+        <Label>{t("Day elapsed")}</Label>
         <span className="tabular-nums text-data font-tabular text-fg">
           {clock} <span className="text-muted-strong">· {Math.round(pct * 100)}%</span>
         </span>
       </div>
-      <div className="relative h-6" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct * 100)} aria-label="Day elapsed">
+      <div className="relative h-6" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(pct * 100)} aria-label={t("Day elapsed")}>
         <div className="absolute inset-x-0 bottom-0 flex h-full items-end justify-between">
           {hours.map((h) => (
             <span

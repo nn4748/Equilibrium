@@ -7,6 +7,7 @@ import type { ScheduleType, TimeOfDay } from "@/domain/types";
 import { cn } from "@/lib/cn";
 import { Segmented, WeekdayPicker, WeightStepper } from "@/ui/controls";
 import { Field, Input, Textarea } from "@/ui/field";
+import { t } from "@/i18n";
 
 export type FormErrors = Partial<Record<keyof HabitInput, string>>;
 
@@ -46,7 +47,7 @@ export function HabitForm({
 
   return (
     <div className="flex flex-col gap-8">
-      <Field label="Name" error={errors.title}>
+      <Field label={t("Name")} error={errors.title && t(errors.title)}>
         {(p) => (
           <Input
             {...p}
@@ -54,26 +55,26 @@ export function HabitForm({
             maxLength={60}
             value={value.title}
             onChange={(e) => set("title", e.target.value)}
-            placeholder="e.g. Read 20 pages"
+            placeholder={t("e.g. Read 20 pages")}
             autoComplete="off"
           />
         )}
       </Field>
 
       <div className="flex flex-col gap-3">
-        <Question>How often?</Question>
-        <Segmented label="How often" options={SCHEDULES} value={value.scheduleType} onChange={(v) => set("scheduleType", v)} className="w-full" />
+        <Question>{t("How often?")}</Question>
+        <Segmented label={t("How often")} options={SCHEDULES} value={value.scheduleType} onChange={(v) => set("scheduleType", v)} className="w-full" />
         {value.scheduleType === "weekdays" ? (
           <>
-            <p className="text-[14px] text-muted-strong">Pick the days:</p>
+            <p className="text-[14px] text-muted-strong">{t("Pick the days:")}</p>
             <WeekdayPicker value={value.scheduledDays} onChange={(d) => set("scheduledDays", d)} weekStartsOn={weekStartsOn} />
-            {errors.scheduledDays ? <p role="alert" className="text-[13px] font-medium text-fg">{errors.scheduledDays}</p> : null}
+            {errors.scheduledDays ? <p role="alert" className="text-[13px] font-medium text-fg">{t(errors.scheduledDays)}</p> : null}
           </>
         ) : null}
         {value.scheduleType === "weekly" ? (
           <div className="flex flex-wrap items-center justify-between gap-3 border border-line px-4 py-3">
-            <span className="text-[15px] text-fg">Times a week</span>
-            <div role="radiogroup" aria-label="Times a week" className="flex">
+            <span className="text-[15px] text-fg">{t("Times a week")}</span>
+            <div role="radiogroup" aria-label={t("Times a week")} className="flex">
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <button
                   key={n}
@@ -92,9 +93,9 @@ export function HabitForm({
       </div>
 
       <div className="flex flex-col gap-3">
-        <Question>How important is it?</Question>
+        <Question>{t("How important is it?")}</Question>
         <WeightStepper value={value.weight} onChange={(w) => set("weight", w)} />
-        <p className="text-[13px] text-muted-strong">More important habits count more toward your daily score.</p>
+        <p className="text-[13px] text-muted-strong">{t("More important habits count more toward your daily score.")}</p>
       </div>
 
       <div className="border-t border-line pt-5">
@@ -104,18 +105,18 @@ export function HabitForm({
           onClick={() => setMore(!more)}
           className="flex w-full items-center justify-between text-[15px] font-medium text-fg"
         >
-          More options
+          {t("More options")}
           <ChevronDown className={cn("size-4 text-muted-strong transition-transform", more && "rotate-180")} strokeWidth={1.75} />
         </button>
         {more ? (
           <div className="mt-6 flex flex-col gap-8">
             <div className="flex flex-col gap-3">
-              <Question>Best time of day</Question>
-              <Segmented label="Best time of day" options={TIMES} value={value.preferredTime} onChange={(v) => set("preferredTime", v)} className="w-full" size="sm" />
+              <Question>{t("Best time of day")}</Question>
+              <Segmented label={t("Best time of day")} options={TIMES} value={value.preferredTime} onChange={(v) => set("preferredTime", v)} className="w-full" size="sm" />
             </div>
 
             <div className="flex flex-col gap-3">
-              <Question>Category</Question>
+              <Question>{t("Category")}</Question>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((c) => (
                   <button
@@ -128,7 +129,7 @@ export function HabitForm({
                       value.category === c ? "border-fg bg-fg text-bg" : "border-line text-muted-strong hover:border-muted hover:text-fg",
                     )}
                   >
-                    {c}
+                    {t(c)}
                   </button>
                 ))}
                 <button
@@ -137,17 +138,17 @@ export function HabitForm({
                   onClick={() => !customCategory && set("category", "")}
                   className={cn("h-10 border px-4 text-[14px] transition-colors", customCategory ? "border-fg text-fg" : "border-dashed border-line text-muted-strong hover:text-fg")}
                 >
-                  Other
+                  {t("Other")}
                 </button>
               </div>
               {customCategory ? (
-                <Field label="Category name" error={errors.category}>
-                  {(p) => <Input {...p} maxLength={24} value={value.category} onChange={(e) => set("category", e.target.value)} placeholder="e.g. Money" />}
+                <Field label={t("Category name")} error={errors.category && t(errors.category)}>
+                  {(p) => <Input {...p} maxLength={24} value={value.category} onChange={(e) => set("category", e.target.value)} placeholder={t("e.g. Money")} />}
                 </Field>
               ) : null}
             </div>
 
-            <Field label="Notes (optional)">
+            <Field label={t("Notes (optional)")}>
               {(p) => <Textarea {...p} rows={3} maxLength={280} value={value.description} onChange={(e) => set("description", e.target.value)} />}
             </Field>
           </div>

@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import type { DayEntry } from "@/domain/schedule";
 import { cn } from "@/lib/cn";
 import { Label } from "@/ui/typography";
+import { t } from "@/i18n";
 
 /**
  * Today's load as a segmented bar: one segment per counted habit, its width
@@ -18,7 +19,7 @@ export function LoadBar({ entries, className }: { entries: readonly DayEntry[]; 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between">
-        <Label>Left to do</Label>
+        <Label>{t("Left to do")}</Label>
         <span className="tabular-nums text-data font-tabular text-fg">
           {remaining}
           <span className="text-muted-strong"> / {total}</span>
@@ -27,7 +28,7 @@ export function LoadBar({ entries, className }: { entries: readonly DayEntry[]; 
       <div className="flex h-3 gap-[3px]" aria-hidden>
         {total === 0 ? <div className="flex-1 bg-hatch" /> : null}
         {counted.map((e) => (
-          <div key={e.habit.id} className="relative border border-line" style={{ flexGrow: e.weight, flexBasis: 0 }} title={`${e.habit.title} · importance ${e.weight}`}>
+          <div key={e.habit.id} className="relative border border-line" style={{ flexGrow: e.weight, flexBasis: 0 }} title={`${e.habit.title} · ${t("Importance {n} of 5", { n: e.weight })}`}>
             <motion.div
               className="absolute inset-0 origin-left bg-fg"
               initial={false}

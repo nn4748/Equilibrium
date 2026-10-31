@@ -6,6 +6,7 @@ import { habitStreak } from "@/domain/streaks";
 import { useActiveHabits } from "@/state/derived";
 import { useData } from "@/state/store";
 import { Label } from "@/ui/typography";
+import { t } from "@/i18n";
 
 /** Per-habit 30-day completion rate and current run. */
 export function HabitRuns() {
@@ -22,10 +23,10 @@ export function HabitRuns() {
   return (
     <div className="flex flex-col">
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(80px,180px)_48px_48px] gap-4 border-b border-line pb-3">
-        <Label>Habit</Label>
-        <Label>Last 30 days</Label>
-        <Label className="text-right">Done</Label>
-        <Label className="text-right">Streak</Label>
+        <Label>{t("Habit")}</Label>
+        <Label>{t("Last 30 days")}</Label>
+        <Label className="text-right">{t("Done")}</Label>
+        <Label className="text-right">{t("Streak")}</Label>
       </div>
       <ul>
         {rows.map(({ habit, perf, run }) => (

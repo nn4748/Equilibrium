@@ -10,6 +10,8 @@ import { IconButton } from "@/ui/button";
 import { Kbd } from "@/ui/typography";
 import { NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
+import { t } from "@/i18n";
+import { LangToggle } from "@/features/shell/lang-toggle";
 
 /** Sidebar for tablet and desktop. Collapses to a rail of icons. */
 export function Sidebar({ className }: { className?: string }) {
@@ -21,7 +23,7 @@ export function Sidebar({ className }: { className?: string }) {
 
   return (
     <aside
-      aria-label="Primary"
+      aria-label={t("Primary")}
       data-collapsed={collapsed}
       className={cn(
         "sticky top-0 h-dvh shrink-0 flex-col border-r border-line bg-bg transition-[width] duration-300 ease-precise",
@@ -35,7 +37,7 @@ export function Sidebar({ className }: { className?: string }) {
 
       <div className={cn("pt-4", collapsed ? "flex justify-center" : "px-4")}>
         {collapsed ? (
-          <IconButton label="Search (⌘K)" onClick={() => openPalette(true)}>
+          <IconButton label={t("Search (⌘K)")} onClick={() => openPalette(true)}>
             <Search className="size-4" strokeWidth={1.5} />
           </IconButton>
         ) : (
@@ -45,8 +47,8 @@ export function Sidebar({ className }: { className?: string }) {
             className="flex h-10 w-full items-center gap-3 border border-line px-3 text-[13px] text-muted-strong transition-colors hover:border-muted hover:text-fg"
           >
             <Search className="size-4" strokeWidth={1.5} aria-hidden />
-            <span className="flex-1 text-left">Search</span>
-            <Kbd>⌘K</Kbd>
+            <span className="flex-1 text-left">{t("Search")}</span>
+            <Kbd>{t("⌘K")}</Kbd>
           </button>
         )}
       </div>
@@ -61,8 +63,8 @@ export function Sidebar({ className }: { className?: string }) {
                 <Link
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  aria-label={collapsed ? item.label : undefined}
-                  title={collapsed ? item.label : undefined}
+                  aria-label={collapsed ? t(item.label) : undefined}
+                  title={collapsed ? t(item.label) : undefined}
                   className={cn(
                     "group relative flex h-11 items-center transition-colors duration-200",
                     collapsed ? "justify-center" : "gap-4 px-6",
@@ -80,7 +82,7 @@ export function Sidebar({ className }: { className?: string }) {
                   <Icon className="size-[18px] shrink-0" strokeWidth={isActive ? 1.9 : 1.6} aria-hidden />
                   {!collapsed ? (
                     <>
-                      <span className="text-[15px] font-medium">{item.label}</span>
+                      <span className="text-[15px] font-medium">{t(item.label)}</span>
                       <span
                         aria-hidden
                         className={cn(
@@ -100,8 +102,11 @@ export function Sidebar({ className }: { className?: string }) {
       <div className={cn("flex flex-col gap-4 border-t border-line py-4", collapsed ? "items-center" : "px-6")}>
         {!collapsed ? <DateReadout stacked /> : null}
         <div className={cn("flex items-center", collapsed ? "flex-col gap-1" : "-mx-2 justify-between")}>
-          <ThemeToggle />
-          <IconButton label={collapsed ? "Expand sidebar" : "Collapse sidebar"} onClick={toggle} aria-expanded={!collapsed}>
+          <div className={cn("flex items-center", collapsed ? "flex-col gap-1" : "gap-1")}>
+            <ThemeToggle />
+            <LangToggle className="h-9 min-w-9" />
+          </div>
+          <IconButton label={collapsed ? t("Expand sidebar") : t("Collapse sidebar")} onClick={toggle} aria-expanded={!collapsed}>
             {collapsed ? <PanelLeftOpen className="size-4" strokeWidth={1.5} /> : <PanelLeftClose className="size-4" strokeWidth={1.5} />}
           </IconButton>
         </div>

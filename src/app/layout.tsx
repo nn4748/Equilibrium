@@ -1,13 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Manrope } from "next/font/google";
-import { themeBootScript } from "@/state/theme";
+import { IBM_Plex_Sans_Arabic, Manrope } from "next/font/google";
+import { bootScript } from "@/lib/boot";
 import { ServiceWorker } from "@/features/shell/service-worker";
+import { LangRoot } from "@/features/shell/lang-root";
 import { ThemeSync } from "@/features/shell/theme-sync";
 import "./globals.css";
 
 const sans = Manrope({
   subsets: ["latin"],
   variable: "--font-app",
+  display: "swap",
+});
+
+const arabic = IBM_Plex_Sans_Arabic({
+  subsets: ["arabic"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-arabic",
   display: "swap",
 });
 
@@ -34,14 +42,14 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark" className={sans.variable} suppressHydrationWarning>
+    <html lang="en" data-theme="dark" className={`${sans.variable} ${arabic.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
       <body className="grain">
         <ThemeSync />
         <ServiceWorker />
-        {children}
+        <LangRoot>{children}</LangRoot>
       </body>
     </html>
   );

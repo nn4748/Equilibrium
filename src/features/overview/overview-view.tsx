@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight } from "lucide-react";
-import { formatKey } from "@/domain/dates";
 import { averageScore } from "@/domain/scoring";
 import { balanceStreaks } from "@/domain/streaks";
 import { BalanceGauge } from "@/features/metrics/balance-gauge";
@@ -16,6 +15,7 @@ import { Label } from "@/ui/typography";
 import { Heatmap } from "./heatmap";
 import { HabitRuns } from "./habit-runs";
 import { MonthCalendar } from "./month-calendar";
+import { formatDate, t } from "@/i18n";
 
 function Stat({ label, value, unit, note }: { label: string; value: string | number; unit?: string; note?: string }) {
   return (
@@ -41,9 +41,9 @@ export function OverviewView() {
   if (active.length === 0 && !history.start) {
     return (
       <Page>
-        <PageHeader title="Progress" />
-        <EmptyState title="Nothing to show yet." action={<ButtonLink href="/habits">Add habits</ButtonLink>}>
-          Add a habit and your progress will show up here.
+        <PageHeader title={t("Progress")} />
+        <EmptyState title={t("Nothing to show yet.")} action={<ButtonLink href="/habits">{t("Add habits")}</ButtonLink>}>
+          {t("Add a habit and your progress will show up here.")}
         </EmptyState>
       </Page>
     );
@@ -56,11 +56,11 @@ export function OverviewView() {
   return (
     <Page>
       <PageHeader
-        title="Progress"
-        subtitle={history.start ? `Tracking since ${formatKey(history.start, { day: "numeric", month: "short", year: "numeric" })}` : undefined}
+        title={t("Progress")}
+        subtitle={history.start ? t("Tracking since {date}", { date: formatDate(history.start, { day: "numeric", month: "short", year: "numeric" }) }) : undefined}
         actions={
           <ButtonLink href="/today" variant="secondary">
-            Go to Today <ArrowRight className="size-4" strokeWidth={1.5} />
+            {t("Go to Today")} <ArrowRight className="flip-rtl size-4" strokeWidth={1.5} />
           </ButtonLink>
         }
       />
@@ -71,11 +71,11 @@ export function OverviewView() {
             members={structure.members}
             stress={structure.stress}
             equilibrium={structure.equilibrium}
-            label={`Bridge with ${structure.members.length} beams, one for each habit.`}
+            label={t("Bridge with {n} beams, one for each habit.", { n: structure.members.length })}
             className="h-[280px] sm:h-[380px] lg:h-[480px]"
           />
           <p className="pointer-events-none absolute left-4 top-4 text-[13px] text-muted-strong">
-            {structure.members.length} habits · {structure.equilibrium ? "all done today" : "your bridge"}
+            {t("{n} habits", { n: structure.members.length })} · {structure.equilibrium ? t("all done today") : t("your bridge")}
           </p>
         </div>
         <div className="flex flex-col justify-between gap-8 bg-bg p-5 md:p-6">
@@ -85,34 +85,34 @@ export function OverviewView() {
       </div>
 
       <div className="mt-px grid grid-cols-2 gap-px border-x border-b border-line bg-line md:grid-cols-4">
-        <Stat label="Current streak" value={streaks.current} unit={streaks.current === 1 ? "day" : "days"} note="Days in a row with everything done" />
+        <Stat label={t("Current streak")} value={streaks.current} unit={streaks.current === 1 ? t("day") : t("days")} note={t("Days in a row with everything done")} />
         <Stat
-          label="Longest streak"
+          label={t("Longest streak")}
           value={streaks.longest}
-          unit={streaks.longest === 1 ? "day" : "days"}
-          note={streaks.longestEnd ? `Ended ${formatKey(streaks.longestEnd, { day: "numeric", month: "short" })}` : "No perfect days yet"}
+          unit={streaks.longest === 1 ? t("day") : t("days")}
+          note={streaks.longestEnd ? t("Ended {date}", { date: formatDate(streaks.longestEnd, { day: "numeric", month: "short" }) }) : t("No perfect days yet")}
         />
-        <Stat label="Last 7 days" value={week === null ? "—" : `${Math.round(week)}%`} note="Average score" />
-        <Stat label="Last 30 days" value={month === null ? "—" : `${Math.round(month)}%`} note="Average score" />
+        <Stat label={t("Last 7 days")} value={week === null ? "—" : `${Math.round(week)}%`} note={t("Average score")} />
+        <Stat label={t("Last 30 days")} value={month === null ? "—" : `${Math.round(month)}%`} note={t("Average score")} />
       </div>
 
       <section aria-labelledby="year" className="mt-16">
         <h2 id="year" className="mb-1 text-heading font-semibold text-fg-strong">
-          Your year
+          {t("Your year")}
         </h2>
-        <p className="mb-6 text-[14px] text-muted-strong">Each square is a day. Darker means less done; brighter means more.</p>
+        <p className="mb-6 text-[14px] text-muted-strong">{t("Each square is a day. Darker means less done; brighter means more.")}</p>
         <Heatmap history={history} weekStartsOn={weekStartsOn} />
       </section>
 
       <section aria-labelledby="month" className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,420px)_1fr]">
         <div>
           <h2 id="month" className="mb-6 text-heading font-semibold text-fg-strong">
-            This month
+            {t("This month")}
           </h2>
           <MonthCalendar history={history} weekStartsOn={weekStartsOn} />
         </div>
         <div>
-          <h2 className="mb-6 text-heading font-semibold text-fg-strong">Each habit</h2>
+          <h2 className="mb-6 text-heading font-semibold text-fg-strong">{t("Each habit")}</h2>
           <HabitRuns />
         </div>
       </section>

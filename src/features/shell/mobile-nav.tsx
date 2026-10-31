@@ -10,6 +10,8 @@ import { IconButton } from "@/ui/button";
 import { Sheet } from "@/ui/overlay";
 import { MOBILE_PRIMARY, NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
+import { t } from "@/i18n";
+import { LangToggle } from "@/features/shell/lang-toggle";
 
 const primary = MOBILE_PRIMARY.map((href) => NAV.find((n) => n.href === href)!);
 const secondary = NAV.filter((n) => !(MOBILE_PRIMARY as readonly string[]).includes(n.href));
@@ -23,10 +25,11 @@ export function MobileTopBar({ className }: { className?: string }) {
         <Wordmark />
         <div className="flex items-center gap-1">
           <DateReadout className="mr-2 hidden xs:flex" />
-          <IconButton label="Search" onClick={() => openPalette(true)}>
+          <IconButton label={t("Search")} onClick={() => openPalette(true)}>
             <Search className="size-4" strokeWidth={1.5} />
           </IconButton>
-          <ThemeToggle className="-mr-2" />
+          <LangToggle className="ml-1 h-9 min-w-9" />
+          <ThemeToggle className="-me-2" />
         </div>
       </div>
     </header>
@@ -44,7 +47,7 @@ export function BottomNav({ className }: { className?: string }) {
   return (
     <>
       <nav
-        aria-label="Primary"
+        aria-label={t("Primary")}
         className={cn("safe-bottom fixed inset-x-0 bottom-0 z-40 border-t border-line bg-bg/90 backdrop-blur-md", className)}
       >
         <ul className="grid grid-cols-5">
@@ -70,7 +73,7 @@ export function BottomNav({ className }: { className?: string }) {
                     />
                   ) : null}
                   <Icon className="size-[18px]" strokeWidth={isActive ? 1.75 : 1.25} aria-hidden />
-                  <span className="text-[12px] font-medium">{item.label}</span>
+                  <span className="text-[12px] font-medium">{t(item.label)}</span>
                 </Link>
               </li>
             );
@@ -88,13 +91,13 @@ export function BottomNav({ className }: { className?: string }) {
             >
               {secondaryActive ? <span aria-hidden className="absolute inset-x-5 top-0 h-px bg-fg-strong" /> : null}
               <Ellipsis className="size-[18px]" strokeWidth={1.25} aria-hidden />
-              <span className="text-[12px] font-medium">More</span>
+              <span className="text-[12px] font-medium">{t("More")}</span>
             </button>
           </li>
         </ul>
       </nav>
 
-      <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title="More">
+      <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title={t("More")}>
         <ul className="-mx-6 -mt-6">
           {secondary.map((item) => {
             const Icon = item.icon;
@@ -108,8 +111,8 @@ export function BottomNav({ className }: { className?: string }) {
                   className="flex min-h-16 items-center gap-4 px-6 py-3 transition-colors active:bg-surface"
                 >
                   <span className="flex flex-1 flex-col">
-                    <span className={cn("text-[16px]", isActive ? "text-fg-strong" : "text-fg")}>{item.label}</span>
-                    <span className="text-[13px] text-muted-strong">{item.hint}</span>
+                    <span className={cn("text-[16px]", isActive ? "text-fg-strong" : "text-fg")}>{t(item.label)}</span>
+                    <span className="text-[13px] text-muted-strong">{t(item.hint)}</span>
                   </span>
                   <Icon className="size-4 text-muted-strong" strokeWidth={1.5} aria-hidden />
                 </Link>

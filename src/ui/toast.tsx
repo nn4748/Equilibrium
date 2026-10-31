@@ -40,31 +40,31 @@ export function Toaster() {
       className="pointer-events-none fixed inset-x-0 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-[70] flex flex-col items-center gap-2 px-4 md:bottom-6 md:left-auto md:right-6 md:items-end"
     >
       <AnimatePresence initial={false}>
-        {toasts.map((t) => (
+        {toasts.map((item) => (
           <motion.div
-            key={t.id}
+            key={item.id}
             layout
-            role={t.tone === "error" ? "alert" : "status"}
+            role={item.tone === "error" ? "alert" : "status"}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6, transition: { duration: 0.15 } }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className={cn(
               "pointer-events-auto flex w-full max-w-sm items-center gap-4 border bg-bg-raised py-2.5 pl-4 pr-2 shadow-layer",
-              t.tone === "error" ? "border-fg" : "border-line",
+              item.tone === "error" ? "border-fg" : "border-line",
             )}
           >
-            <p className="flex-1 text-[14px] text-fg">{t.message}</p>
-            {t.action ? (
+            <p className="flex-1 text-[14px] text-fg">{item.message}</p>
+            {item.action ? (
               <button
                 type="button"
                 onClick={() => {
-                  t.action!.run();
-                  dismiss(t.id);
+                  item.action!.run();
+                  dismiss(item.id);
                 }}
                 className="label-tech h-9 shrink-0 px-3 text-fg-strong underline decoration-line underline-offset-4 hover:decoration-fg"
               >
-                {t.action.label}
+                {item.action.label}
               </button>
             ) : null}
           </motion.div>

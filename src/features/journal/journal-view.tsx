@@ -2,7 +2,7 @@
 
 import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { addDays, addMonths, daysInMonth, formatKey, startOfMonth, startOfWeek } from "@/domain/dates";
+import { addDays, addMonths, daysInMonth, startOfMonth, startOfWeek } from "@/domain/dates";
 import type { DateKey, Mood } from "@/domain/types";
 import { cn } from "@/lib/cn";
 import { useData } from "@/state/store";
@@ -11,6 +11,7 @@ import { Textarea } from "@/ui/field";
 import { Dialog } from "@/ui/overlay";
 import { Page, PageHeader } from "@/ui/page";
 import { Label } from "@/ui/typography";
+import { formatDate, t, weekdayName } from "@/i18n";
 
 const MOODS: { value: Mood; label: string }[] = [
   { value: 1, label: "Bad" },
@@ -22,7 +23,7 @@ const MOODS: { value: Mood; label: string }[] = [
 
 function MoodPicker({ value, onChange }: { value: Mood | null; onChange: (m: Mood | null) => void }) {
   return (
-    <div role="radiogroup" aria-label="Mood" className="grid grid-cols-5 border-l border-t border-line">
+    <div role="radiogroup" aria-label={t("Mood")} className="grid grid-cols-5 border-l border-t border-line">
       {MOODS.map((m) => {
         const on = value === m.value;
         return (
@@ -38,7 +39,7 @@ function MoodPicker({ value, onChange }: { value: Mood | null; onChange: (m: Moo
             )}
           >
             <span aria-hidden className={cn("w-1.5", on ? "bg-bg" : "bg-current")} style={{ height: 4 + m.value * 4 }} />
-            <span className="label-tech">{m.label}</span>
+            <span className="label-tech">{t(m.label)}</span>
           </button>
         );
       })}
@@ -86,17 +87,17 @@ function Editor({ date }: { date: DateKey }) {
     <div className="flex flex-col gap-6">
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-1.5">
-          <Label>{formatKey(date, { weekday: "long" })}</Label>
-          <h2 className="text-title font-medium text-fg-strong">{formatKey(date, { day: "numeric", month: "long", year: "numeric" })}</h2>
+          <Label>{formatDate(date, { weekday: "long" })}</Label>
+          <h2 className="text-title font-medium text-fg-strong">{formatDate(date, { day: "numeric", month: "long", year: "numeric" })}</h2>
         </div>
         {entry ? (
-          <IconButton label="Delete entry" onClick={() => setConfirm(true)}>
+          <IconButton label={t("Delete entry")} onClick={() => setConfirm(true)}>
             <Trash2 className="size-4" strokeWidth={1.5} />
           </IconButton>
         ) : null}
       </div>
       <div className="flex flex-col gap-3">
-        <Label>How do you feel?</Label>
+        <Label>{t("How do you feel?")}</Label>
         <MoodPicker
           value={mood}
           onChange={(m) => {
@@ -108,10 +109,10 @@ function Editor({ date }: { date: DateKey }) {
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
           <Label>
-            <label htmlFor="reflection">Your notes</label>
+            <label htmlFor="reflection">{t("Your notes")}</label>
           </Label>
           <span className="label-tech text-muted-strong" aria-live="polite">
-            {status === "pending" ? "Saving…" : status === "saved" ? "Saved" : `${words} word${words === 1 ? "" : "s"}`}
+            {status === "pending" ? t("Saving…") : status === "saved" ? t("Saved") : words === 1 ? t("1 word") : t("{n} words", { n: words })}
           </span>
         </div>
         <Textarea
@@ -122,20 +123,20 @@ function Editor({ date }: { date: DateKey }) {
             setContent(e.target.value);
             queue(e.target.value, mood);
           }}
-          placeholder="How did today go?"
+          placeholder={t("How did today go?")}
           className="min-h-56 text-[16px] leading-relaxed"
         />
-        <p className="text-[12px] text-muted-strong">Saved on this device only.</p>
+        <p className="text-[12px] text-muted-strong">{t("Saved on this device only.")}</p>
       </div>
       <Dialog
         open={confirm}
         onClose={() => setConfirm(false)}
-        title="Delete this entry?"
-        description={`Your reflection for ${formatKey(date, { day: "numeric", month: "long" })} will be removed.`}
+        title={t("Delete this entry?")}
+        description={t("Your notes for {date} will be removed.", { date: formatDate(date, { day: "numeric", month: "long" }) })}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setConfirm(false)}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               onClick={() => {
@@ -148,7 +149,7 @@ function Editor({ date }: { date: DateKey }) {
                 setConfirm(false);
               }}
             >
-              Delete
+              {t("Delete")}
             </Button>
           </>
         }
@@ -168,18 +169,18 @@ function Calendar({ selected, onSelect }: { selected: DateKey; onSelect: (d: Dat
     for (let d = start; d < month; d = addDays(d, 1)) n++;
     return n;
   }, [month, weekStartsOn]);
-  const heads = weekStartsOn === 1 ? ["M", "T", "W", "T", "F", "S", "S"] : ["S", "M", "T", "W", "T", "F", "S"];
+  const heads = Array.from({ length: 7 }, (_, i) => weekdayName((i + weekStartsOn) % 7, "narrow"));
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <span className="text-[15px] font-medium text-fg">{formatKey(month, { month: "long", year: "numeric" })}</span>
+        <span className="text-[15px] font-medium text-fg">{formatDate(month, { month: "long", year: "numeric" })}</span>
         <div className="flex">
-          <IconButton label="Previous month" size="sm" onClick={() => setMonth(addMonths(month, -1))}>
-            <ChevronLeft className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Previous month")} size="sm" onClick={() => setMonth(addMonths(month, -1))}>
+            <ChevronLeft className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
-          <IconButton label="Next month" size="sm" disabled={month >= startOfMonth(today)} onClick={() => setMonth(addMonths(month, 1))}>
-            <ChevronRight className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Next month")} size="sm" disabled={month >= startOfMonth(today)} onClick={() => setMonth(addMonths(month, 1))}>
+            <ChevronRight className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
         </div>
       </div>
@@ -203,7 +204,7 @@ function Calendar({ selected, onSelect }: { selected: DateKey; onSelect: (d: Dat
               type="button"
               disabled={future}
               aria-pressed={isSel}
-              aria-label={`${formatKey(key, { day: "numeric", month: "long" })}${entry ? ", has entry" : ""}`}
+              aria-label={`${formatDate(key, { day: "numeric", month: "long" })}${entry ? ` · ${t("has notes")}` : ""}`}
               onClick={() => onSelect(key)}
               className={cn(
                 "relative flex aspect-square flex-col items-center justify-center gap-1 tabular-nums text-[12px] transition-colors disabled:opacity-25",
@@ -231,16 +232,16 @@ export function JournalView() {
 
   return (
     <Page>
-      <PageHeader title="Journal" subtitle={`${entries.length} entr${entries.length === 1 ? "y" : "ies"}`} />
+      <PageHeader title={t("Journal")} subtitle={entries.length === 1 ? t("1 entry") : t("{n} entries", { n: entries.length })} />
       <div className="grid gap-12 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
         <div className="order-2 flex flex-col gap-12 lg:order-1">
           <Calendar key={startOfMonth(date)} selected={date} onSelect={setSelected} />
           <section aria-labelledby="entries">
             <h2 id="entries" className="label-tech border-b border-line pb-3 text-muted-strong">
-              Past entries
+              {t("Past entries")}
             </h2>
             {entries.length === 0 ? (
-              <p className="py-6 text-[14px] text-muted-strong">No entries yet.</p>
+              <p className="py-6 text-[14px] text-muted-strong">{t("No entries yet.")}</p>
             ) : (
               <ul>
                 {entries.slice(0, limit).map((e) => (
@@ -252,8 +253,8 @@ export function JournalView() {
                       className={cn("flex w-full flex-col gap-1 border-b border-line py-3 text-left transition-colors hover:bg-surface/60", e.date === date && "bg-surface")}
                     >
                       <span className="flex items-center justify-between gap-4 px-1">
-                        <span className="tabular-nums text-[12px] text-fg">{formatKey(e.date, { weekday: "short", day: "numeric", month: "short" })}</span>
-                        {e.mood ? <span className="label-tech text-muted-strong">{MOODS[e.mood - 1]!.label}</span> : null}
+                        <span className="tabular-nums text-[12px] text-fg">{formatDate(e.date, { weekday: "short", day: "numeric", month: "short" })}</span>
+                        {e.mood ? <span className="label-tech text-muted-strong">{t(MOODS[e.mood - 1]!.label)}</span> : null}
                       </span>
                       {e.content ? <span className="line-clamp-2 px-1 text-[13px] text-muted-strong">{e.content}</span> : null}
                     </button>
@@ -263,7 +264,7 @@ export function JournalView() {
             )}
             {entries.length > limit ? (
               <Button variant="ghost" size="sm" className="mt-3" onClick={() => setLimit(limit + 12)}>
-                Show more
+                {t("Show more")}
               </Button>
             ) : null}
           </section>

@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { cn } from "@/lib/cn";
+import { t, weekdayName } from "@/i18n";
 
 /* ------------------------------------------------------------ radio grid */
 
@@ -58,7 +59,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, s
               selected ? "bg-fg text-bg" : "text-muted-strong hover:text-fg",
             )}
           >
-            {option.label}
+            {typeof option.label === "string" ? t(option.label) : option.label}
           </button>
         );
       })}
@@ -140,7 +141,7 @@ export function WeightStepper({
               type="button"
               role="radio"
               aria-checked={selected}
-              aria-label={`${w} — ${weightNames[w]}`}
+              aria-label={`${w}: ${t(weightNames[w])}`}
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(w)}
               className="group flex h-full w-7 items-end justify-center"
@@ -157,7 +158,7 @@ export function WeightStepper({
           );
         })}
       </div>
-      <span className="pb-0.5 text-[15px] font-medium text-fg">{weightNames[value]}</span>
+      <span className="pb-0.5 text-[15px] font-medium text-fg">{t(weightNames[value])}</span>
     </div>
   );
 }
@@ -165,7 +166,6 @@ export function WeightStepper({
 /* -------------------------------------------------------- weekday picker */
 
 export type Weekday = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
 
 /** Multi-select weekdays. `weekStartsOn` controls display order only. */
 export function WeekdayPicker({
@@ -185,7 +185,7 @@ export function WeekdayPicker({
     onChange(next.sort((a, b) => a - b));
   };
   return (
-    <div role="group" aria-label="Scheduled days" className={cn("grid grid-cols-7 border-l border-t border-line", className)}>
+    <div role="group" aria-label={t("Scheduled days")} className={cn("grid grid-cols-7 border-l border-t border-line", className)}>
       {order.map((day) => {
         const on = value.includes(day);
         return (
@@ -193,14 +193,14 @@ export function WeekdayPicker({
             key={day}
             type="button"
             aria-pressed={on}
-            aria-label={WEEKDAY_NAMES[day]}
+            aria-label={weekdayName(day, "long")}
             onClick={() => toggle(day)}
             className={cn(
               "flex h-11 flex-col items-center justify-center border-b border-r border-line tabular-nums text-[12px] transition-colors duration-200 ease-precise",
               on ? "bg-fg text-bg" : "text-muted-strong hover:bg-surface hover:text-fg",
             )}
           >
-            {WEEKDAY_NAMES[day].slice(0, 2).toUpperCase()}
+            {weekdayName(day, "short")}
           </button>
         );
       })}

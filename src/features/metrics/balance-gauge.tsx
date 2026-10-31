@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { cn } from "@/lib/cn";
 import { AnimatedNumber } from "@/ui/animated-number";
 import { Label } from "@/ui/typography";
+import { t } from "@/i18n";
 
 const R = 100;
 const CX = 120;
@@ -57,7 +58,7 @@ export function BalanceGauge({
 
   return (
     <figure className={cn("flex flex-col", className)}>
-      <svg viewBox="0 0 240 132" className="w-full" role="img" aria-label={`Balance score ${today === null ? "not available" : Math.round(value)} out of 100`}>
+      <svg viewBox="0 0 240 132" className="w-full" role="img" aria-label={today === null ? t("No score yet") : t("Score {n} out of 100", { n: Math.round(value) })}>
         <path d={`M ${CX - R} ${CY} A ${R} ${R} 0 0 1 ${CX + R} ${CY}`} fill="none" stroke="var(--line)" strokeWidth={1} />
         <path d={`M ${CX - R + 22} ${CY} A ${R - 22} ${R - 22} 0 0 1 ${CX + R - 22} ${CY}`} fill="none" stroke="var(--line-faint)" strokeWidth={1} />
         {ticks.map((t) => {
@@ -75,8 +76,8 @@ export function BalanceGauge({
             </text>
           );
         })}
-        {week !== null ? <Marker value={week} filled label={`7-day average ${Math.round(week)}`} /> : null}
-        {month !== null ? <Marker value={month} filled={false} label={`30-day average ${Math.round(month)}`} /> : null}
+        {week !== null ? <Marker value={week} filled label={t("Last 7 days: {n}%", { n: Math.round(week) })} /> : null}
+        {month !== null ? <Marker value={month} filled={false} label={t("Last 30 days: {n}%", { n: Math.round(month) })} /> : null}
         {today !== null ? (
           <>
             <motion.line x1={tx} y1={ty} x2={x2} y2={y2} stroke="var(--fg-strong)" strokeWidth={1.4} strokeLinecap="square" />
@@ -88,7 +89,7 @@ export function BalanceGauge({
 
       <div className={cn("flex items-end justify-between border-t border-line pt-4", compact ? "mt-2" : "mt-3")}>
         <div className="flex flex-col gap-1">
-          <Label>Today</Label>
+          <Label>{t("Today")}</Label>
           <span className={cn("tabular-nums font-tabular leading-none tracking-[-0.02em] text-fg-strong", compact ? "text-[2.25rem]" : "text-[3rem]")}>
             {today === null ? "—" : (<><AnimatedNumber value={value} /><span className="text-[0.5em] text-muted-strong">%</span></>)}
           </span>
@@ -99,7 +100,7 @@ export function BalanceGauge({
               <svg viewBox="0 0 8 8" className="size-2" aria-hidden>
                 <path d="M4 7 0.5 1h7z" fill="currentColor" />
               </svg>
-              Last 7 days
+              {t("Last 7 days")}
             </dt>
             <dd className="tabular-nums text-[15px] font-tabular text-fg">{fmt(week)}</dd>
           </div>
@@ -108,7 +109,7 @@ export function BalanceGauge({
               <svg viewBox="0 0 8 8" className="size-2" aria-hidden>
                 <path d="M4 7 0.5 1h7z" fill="none" stroke="currentColor" />
               </svg>
-              Last 30 days
+              {t("Last 30 days")}
             </dt>
             <dd className="tabular-nums text-[15px] font-tabular text-fg">{fmt(month)}</dd>
           </div>

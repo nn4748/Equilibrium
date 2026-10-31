@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { t } from "@/i18n";
 
 /** Width of an element, tracked with ResizeObserver, so lines stay 1px crisp. */
 function useWidth<T extends HTMLElement>() {
@@ -100,7 +101,7 @@ export function BarChart({
           height={height + 22}
           role="img"
           tabIndex={0}
-          aria-label={`${label}. Use left and right arrow keys to inspect values.`}
+          aria-label={`${label}. ${t("Use the left and right arrow keys to see each value.")}`}
           onKeyDown={onKeyDown}
           onPointerLeave={() => setIndex(null)}
           onBlur={() => setIndex(null)}
@@ -171,10 +172,10 @@ export function LineChart({ data, height = 200, label, fallback }: { data: Datum
         <Readout text={shown ? `${shown.label} — ${shown.detail}` : <span className="text-muted-strong">{fallback}</span>} />
         <div className="hidden shrink-0 items-center gap-4 tabular-nums text-[12px] text-muted-strong sm:flex" aria-hidden>
           <span className="flex items-center gap-1.5">
-            <span className="h-px w-4 bg-muted" /> Daily
+            <span className="h-px w-4 bg-muted" /> {t("Daily")}
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-0.5 w-4 bg-fg" /> 7-day mean
+            <span className="h-0.5 w-4 bg-fg" /> {t("7-day mean")}
           </span>
         </div>
       </div>
@@ -184,7 +185,7 @@ export function LineChart({ data, height = 200, label, fallback }: { data: Datum
           height={height + 22}
           role="img"
           tabIndex={0}
-          aria-label={`${label}. Use left and right arrow keys to inspect days.`}
+          aria-label={`${label}. ${t("Use the left and right arrow keys to see each day.")}`}
           onKeyDown={onKeyDown}
           onPointerMove={onMove}
           onPointerLeave={() => setIndex(null)}

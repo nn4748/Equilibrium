@@ -2,18 +2,18 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { addDays, formatKey, keyFromParts, startOfWeek } from "@/domain/dates";
+import { addDays, keyFromParts, startOfWeek } from "@/domain/dates";
 import type { History } from "@/domain/scoring";
 import { IconButton } from "@/ui/button";
 import { Label } from "@/ui/typography";
 import { HEAT_LABELS, describeDay, heatLevel } from "./heat";
+import { formatDate, monthName, t, weekdayName } from "@/i18n";
 
 const CELL = 11;
 const GAP = 3;
 const STEP = CELL + GAP;
 const LEFT = 28;
 const TOP = 18;
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /**
  * Annual activity grid. One focusable SVG: arrow keys move a selection,
@@ -38,7 +38,7 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
         const key = addDays(week, row);
         if (key < jan1 || key > dec31) continue;
         out.push({ key, col, row });
-        if (key.endsWith("-01")) monthCols.push({ label: MONTHS[Number(key.slice(5, 7)) - 1]!, col });
+        if (key.endsWith("-01")) monthCols.push({ label: monthName(Number(key.slice(5, 7)) - 1, "short"), col });
       }
     }
     return { cells: out, weeks: col, monthCols };
@@ -56,7 +56,10 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
   const activeMetrics = active ? history.days.get(active) : undefined;
   const width = LEFT + weeks * STEP;
   const height = TOP + 7 * STEP;
-  const dayLabels = weekStartsOn === 1 ? ["Mon", "", "Wed", "", "Fri", "", ""] : ["", "Mon", "", "Wed", "", "Fri", ""];
+  const dayLabels = Array.from({ length: 7 }, (_, row) => {
+    const day = (row + weekStartsOn) % 7;
+    return day === 1 || day === 3 || day === 5 ? weekdayName(day, "short") : "";
+  });
 
   const yearTotals = useMemo(() => {
     let perfect = 0;
@@ -83,16 +86,16 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-1">
-          <IconButton label="Previous year" size="sm" disabled={year <= firstYear} onClick={() => setYear(year - 1)}>
-            <ChevronLeft className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Previous year")} size="sm" disabled={year <= firstYear} onClick={() => setYear(year - 1)}>
+            <ChevronLeft className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
           <span className="w-12 text-center tabular-nums text-[14px] text-fg">{year}</span>
-          <IconButton label="Next year" size="sm" disabled={year >= thisYear} onClick={() => setYear(year + 1)}>
-            <ChevronRight className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Next year")} size="sm" disabled={year >= thisYear} onClick={() => setYear(year + 1)}>
+            <ChevronRight className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
         </div>
         <span className="tabular-nums text-[12px] text-muted-strong">
-          {yearTotals.perfect} perfect days out of {yearTotals.tracked}
+          {t("{n} perfect days out of {total}", { n: yearTotals.perfect, total: yearTotals.tracked })}
         </span>
       </div>
 
@@ -103,7 +106,7 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
           viewBox={`0 0 ${width} ${height}`}
           tabIndex={0}
           role="group"
-          aria-label={`Activity in ${year}. Use arrow keys to inspect days.`}
+          aria-label={t("Your year {year}. Use the arrow keys to move between days.", { year })}
           onKeyDown={onKeyDown}
           onPointerLeave={() => setSelected(null)}
           className="block outline-offset-4"
@@ -149,18 +152,18 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
         <p aria-live="polite" className="min-h-5 tabular-nums text-[12px] text-fg">
           {active ? (
             <>
-              {formatKey(active, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(activeMetrics)}</span>
+              {formatDate(active, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(activeMetrics)}</span>
             </>
           ) : (
-            <span className="text-muted-strong">Tap a day to see details.</span>
+            <span className="text-muted-strong">{t("Tap a day to see details.")}</span>
           )}
         </p>
-        <div className="flex items-center gap-2" aria-label="Legend">
-          <Label className="mr-1">Less</Label>
+        <div className="flex items-center gap-2" aria-label={t("Legend")}>
+          <Label className="mr-1">{t("Less")}</Label>
           {HEAT_LABELS.map((l, i) => (
             <span key={l} title={l} className="size-[11px]" style={{ background: `var(--heat-${i})` }} />
           ))}
-          <Label className="ml-1">More</Label>
+          <Label className="ml-1">{t("More")}</Label>
         </div>
       </div>
     </div>

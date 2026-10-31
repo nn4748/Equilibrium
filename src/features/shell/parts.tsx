@@ -7,15 +7,16 @@ import { cn } from "@/lib/cn";
 import { formatCoordinate, formatStamp } from "@/lib/format";
 import { useTheme } from "@/state/theme";
 import { IconButton } from "@/ui/button";
+import { t } from "@/i18n";
 
 export function Wordmark({ compact = false, className }: { compact?: boolean; className?: string }) {
   return (
-    <Link href="/" aria-label="Equilibrium — home" className={cn("inline-flex items-center gap-3 text-fg-strong", className)}>
+    <Link href="/" aria-label={t("Equilibrium — home")} className={cn("inline-flex items-center gap-3 text-fg-strong", className)}>
       <svg aria-hidden viewBox="0 0 24 24" className="size-6 shrink-0">
         <path d="M1.5 20.5h21M4 20.5 12 4l8 16.5M8 12.25h8" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="miter" />
         <circle cx="12" cy="4" r="1.25" fill="currentColor" />
       </svg>
-      {compact ? null : <span className="text-[17px] font-semibold tracking-[-0.01em]">Equilibrium</span>}
+      {compact ? null : <span className="text-[17px] font-semibold tracking-[-0.01em]">{t("Equilibrium")}</span>}
     </Link>
   );
 }
@@ -25,7 +26,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   const toggle = useTheme((s) => s.toggle);
   const next = resolved === "dark" ? "light" : "dark";
   return (
-    <IconButton label={`Switch to ${next} theme`} onClick={toggle} className={className}>
+    <IconButton label={next === "dark" ? t("Switch to dark theme") : t("Switch to light theme")} onClick={toggle} className={className}>
       {resolved === "dark" ? <Sun className="size-4" strokeWidth={1.5} /> : <Moon className="size-4" strokeWidth={1.5} />}
     </IconButton>
   );

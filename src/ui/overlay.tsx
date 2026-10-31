@@ -8,6 +8,7 @@ import { cn } from "@/lib/cn";
 import { MQ, useFocusTrap, useHydrated, useMediaQuery, useScrollLock } from "@/lib/hooks";
 import { IconButton } from "./button";
 import { Label } from "./typography";
+import { t } from "@/i18n";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -51,7 +52,7 @@ function Header({ title, code, description, onClose, titleId, descId }: Pick<Ove
           </div>
         ) : null}
       </div>
-      <IconButton label="Close" size="sm" onClick={onClose} className="-mr-2 -mt-1">
+      <IconButton label={t("Close")} size="sm" onClick={onClose} className="-mr-2 -mt-1">
         <X className="size-4" strokeWidth={1.5} />
       </IconButton>
     </header>

@@ -12,6 +12,7 @@ import { Dialog } from "@/ui/overlay";
 import { Page, PageHeader } from "@/ui/page";
 import { InstallApp } from "./install-app";
 import { toast } from "@/ui/toast";
+import { t, useLang } from "@/i18n";
 
 const THEMES = [
   { value: "dark", label: "Dark" },
@@ -62,6 +63,8 @@ function storageUsed(): string {
 }
 
 export function SettingsView() {
+  const lang = useLang((s) => s.lang);
+  const setLang = useLang((s) => s.setLang);
   const preference = useTheme((s) => s.preference);
   const setPreference = useTheme((s) => s.setPreference);
   const settings = useData((s) => s.settings);
@@ -86,7 +89,7 @@ export function SettingsView() {
     setImportError(null);
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      setImportError("That file is too big to be an Equilibrium file.");
+      setImportError(t("That file is too big to be an Equilibrium file."));
       return;
     }
     setPendingImport({ name: file.name, text: await file.text() });
@@ -97,28 +100,39 @@ export function SettingsView() {
     if (!pendingImport) return;
     const result = await importJSON(pendingImport.text);
     setPendingImport(null);
-    if (result.ok) toast(`Loaded ${result.habits} habits. Your old data was backed up.`);
-    else setImportError(result.error);
+    if (result.ok) toast(t("Loaded {n} habits. Your old data was backed up.", { n: result.habits }));
+    else setImportError(t(result.error));
   };
 
   return (
     <Page>
-      <PageHeader title="Settings" />
+      <PageHeader title={t("Settings")} />
 
       <div className="max-w-4xl">
-        <Group id="app" title="App">
-          <Row title="Add to home screen" description="Open Equilibrium like a normal app, full screen. It works offline too.">
+        <Group id="app" title={t("App")}>
+          <Row title={t("Add to home screen")} description={t("Open Equilibrium like a normal app, full screen. It works offline too.")}>
             <InstallApp />
           </Row>
         </Group>
 
-        <Group id="appearance" title="Appearance">
-          <Row title="Theme" description="System follows your device setting.">
-            <Segmented label="Theme" options={THEMES} value={preference} onChange={setPreference} />
-          </Row>
-          <Row title="Reduce motion" description="Fewer animations. System follows your phone or computer setting.">
+        <Group id="appearance" title={t("Appearance")}>
+          <Row title={t("Language")} description={t("English or Arabic.")}>
             <Segmented
-              label="Reduce motion"
+              label={t("Language")}
+              value={lang}
+              onChange={setLang}
+              options={[
+                { value: "en", label: "English" },
+                { value: "ar", label: "العربية" },
+              ]}
+            />
+          </Row>
+          <Row title={t("Theme")} description={t("System follows your device setting.")}>
+            <Segmented label={t("Theme")} options={THEMES} value={preference} onChange={setPreference} />
+          </Row>
+          <Row title={t("Reduce motion")} description={t("Fewer animations. System follows your phone or computer setting.")}>
+            <Segmented
+              label={t("Reduce motion")}
               value={p.reducedMotion}
               onChange={(reducedMotion) => updateSettings({ preferences: { reducedMotion } })}
               options={[
@@ -128,9 +142,9 @@ export function SettingsView() {
               ]}
             />
           </Row>
-          <Row title="3D quality" description="Auto picks what works best on your device. Low saves battery.">
+          <Row title={t("3D quality")} description={t("Auto picks what works best on your device. Low saves battery.")}>
             <Segmented
-              label="3D quality"
+              label={t("3D quality")}
               value={p.quality}
               onChange={(quality) => updateSettings({ preferences: { quality } })}
               options={[
@@ -142,10 +156,10 @@ export function SettingsView() {
           </Row>
         </Group>
 
-        <Group id="calendar" title="Calendar">
-          <Row title="Week starts on">
+        <Group id="calendar" title={t("Calendar")}>
+          <Row title={t("Week starts on")}>
             <Segmented
-              label="Week starts on"
+              label={t("Week starts on")}
               value={String(p.weekStartsOn) as "0" | "1"}
               onChange={(v) => updateSettings({ preferences: { weekStartsOn: v === "0" ? 0 : 1 } })}
               options={[
@@ -154,7 +168,7 @@ export function SettingsView() {
               ]}
             />
           </Row>
-          <Row title="Day starts at" htmlFor="day-start" description="Up late? Anything before this time counts as the day before.">
+          <Row title={t("Day starts at")} htmlFor="day-start" description={t("Up late? Anything before this time counts as the day before.")}>
             <Select id="day-start" value={p.dayStartsAtHour} onChange={(e) => updateSettings({ preferences: { dayStartsAtHour: Number(e.target.value) } })} className="w-36">
               {[0, 1, 2, 3, 4, 5, 6].map((h) => (
                 <option key={h} value={h}>
@@ -165,7 +179,7 @@ export function SettingsView() {
           </Row>
         </Group>
 
-        <Group id="focus" title="Focus">
+        <Group id="focus" title={t("Focus")}>
           {(
             [
               ["Focus time", "work", [15, 20, 25, 30, 45, 50, 60, 90]],
@@ -173,38 +187,38 @@ export function SettingsView() {
               ["Long break", "long", [10, 15, 20, 30]],
             ] as const
           ).map(([title, key, options]) => (
-            <Row key={key} title={title} htmlFor={`focus-${key}`}>
+            <Row key={key} title={t(title)} htmlFor={`focus-${key}`}>
               <Select id={`focus-${key}`} value={f[key]} onChange={(e) => updateSettings({ focusSettings: { [key]: Number(e.target.value) } })} className="w-36">
                 {[...new Set([...options, f[key]])].sort((a, b) => a - b).map((m) => (
                   <option key={m} value={m}>
-                    {m} min
+                    {m} {t("min")}
                   </option>
                 ))}
               </Select>
             </Row>
           ))}
-          <Row title="Start the next round automatically">
-            <Switch checked={f.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label="Start the next round automatically" />
+          <Row title={t("Start the next round automatically")}>
+            <Switch checked={f.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label={t("Start the next round automatically")} />
           </Row>
         </Group>
 
-        <Group id="data" title="Data">
-          <Row title="Save a copy" description="Save all your data to a file, so you can keep a copy.">
+        <Group id="data" title={t("Data")}>
+          <Row title={t("Save a copy")} description={t("Save all your data to a file, so you can keep a copy.")}>
             <Button
               variant="secondary"
               onClick={() => {
                 downloadText(`equilibrium-${today}.json`, exportJSON());
-                toast("File saved.");
+                toast(t("File saved."));
               }}
             >
-              <Download className="size-4" strokeWidth={1.5} /> Save file
+              <Download className="size-4" strokeWidth={1.5} /> {t("Save file")}
             </Button>
           </Row>
-          <Row title="Load a copy" description="Load a file you saved before. Your current data is backed up first.">
+          <Row title={t("Load a copy")} description={t("Load a file you saved before. Your current data is backed up first.")}>
             <div className="flex flex-col items-start gap-2 md:items-end">
               <input ref={fileRef} type="file" accept="application/json,.json" className="sr-only" id="import-file" onChange={(e) => void onFile(e.target.files?.[0])} />
               <Button variant="secondary" onClick={() => fileRef.current?.click()}>
-                <Upload className="size-4" strokeWidth={1.5} /> Load file
+                <Upload className="size-4" strokeWidth={1.5} /> {t("Load file")}
               </Button>
               {importError ? (
                 <p role="alert" className="max-w-xs tabular-nums text-[12px] text-fg md:text-right">
@@ -213,30 +227,30 @@ export function SettingsView() {
               ) : null}
             </div>
           </Row>
-          <Row title="Undo last load or reset" description="Go back to your data from before the last load or reset.">
+          <Row title={t("Undo last load or reset")} description={t("Go back to your data from before the last load or reset.")}>
             <Button variant="secondary" onClick={() => setConfirmRestore(true)}>
-              <RotateCcw className="size-4" strokeWidth={1.5} /> Undo
+              <RotateCcw className="size-4" strokeWidth={1.5} /> {t("Undo")}
             </Button>
           </Row>
           <Row
-            title="Sample data"
-            description={mode === "sample" ? "You're looking at made-up data. Your own data is safe." : "Try the app with 150 days of made-up data. Your own data stays safe."}
+            title={t("Sample data")}
+            description={mode === "sample" ? t("You're looking at made-up data. Your own data is safe.") : t("Try the app with 150 days of made-up data. Your own data stays safe.")}
           >
             <Button variant="secondary" onClick={() => void setMode(mode === "sample" ? "live" : "sample")}>
-              <FlaskConical className="size-4" strokeWidth={1.5} /> {mode === "sample" ? "Back to my data" : "Try sample data"}
+              <FlaskConical className="size-4" strokeWidth={1.5} /> {mode === "sample" ? t("Back to my data") : t("Try sample data")}
             </Button>
           </Row>
-          <Row title="Delete all data" description={`Remove ${mode === "sample" ? "the sample data" : "all your habits, history, notes and focus sessions"} from this device.`}>
+          <Row title={t("Delete all data")} description={mode === "sample" ? t("Remove the sample data from this device.") : t("Remove all your habits, history, notes and focus sessions from this device.")}>
             <Button variant="secondary" onClick={() => setConfirmClear(true)} disabled={habits === 0 && mode === "live"}>
-              <Trash2 className="size-4" strokeWidth={1.5} /> Delete all
+              <Trash2 className="size-4" strokeWidth={1.5} /> {t("Delete all")}
             </Button>
           </Row>
-          <p className="mt-4 tabular-nums text-[12px] text-muted-strong">Saved on this device · {storageUsed()} used</p>
+          <p className="mt-4 tabular-nums text-[12px] text-muted-strong">{t("Saved on this device")} · {storageUsed()}</p>
         </Group>
 
-        <Group id="about" title="About">
+        <Group id="about" title={t("About")}>
           <p className="py-5 text-[14px] text-muted-strong">
-            Equilibrium, made by <span className="text-fg">Nourah Aleissa</span>.
+            {t("Equilibrium, made by")} <span className="text-fg">{t("Nourah Aleissa")}</span>.
           </p>
         </Group>
       </div>
@@ -244,34 +258,34 @@ export function SettingsView() {
       <Dialog
         open={pendingImport !== null}
         onClose={() => setPendingImport(null)}
-        title="Replace your data?"
-        description={pendingImport ? `“${pendingImport.name}” will replace your current data. We'll back it up first.` : undefined}
+        title={t("Replace your data?")}
+        description={pendingImport ? t("“{name}” will replace your current data. We'll back it up first.", { name: pendingImport.name }) : undefined}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setPendingImport(null)}>
-              Cancel
+              {t("Cancel")}
             </Button>
-            <Button onClick={() => void runImport()}>Replace</Button>
+            <Button onClick={() => void runImport()}>{t("Replace")}</Button>
           </>
         }
       />
       <Dialog
         open={confirmRestore}
         onClose={() => setConfirmRestore(false)}
-        title="Undo last load or reset?"
-        description="Your data will go back to how it was before."
+        title={t("Undo last load or reset?")}
+        description={t("Your data will go back to how it was before.")}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setConfirmRestore(false)}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               onClick={async () => {
                 setConfirmRestore(false);
-                toast((await restoreBackup()) ? "Done. Your data is back." : "There's nothing to undo yet.");
+                toast((await restoreBackup()) ? t("Done. Your data is back.") : t("There's nothing to undo yet."));
               }}
             >
-              Undo
+              {t("Undo")}
             </Button>
           </>
         }
@@ -279,21 +293,21 @@ export function SettingsView() {
       <Dialog
         open={confirmClear}
         onClose={() => setConfirmClear(false)}
-        title="Delete all data?"
-        description="This removes everything from this device. Save a copy first if you want to keep it."
+        title={t("Delete all data?")}
+        description={t("This removes everything from this device. Save a copy first if you want to keep it.")}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setConfirmClear(false)}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               onClick={async () => {
                 setConfirmClear(false);
                 await clearAll();
-                toast("All data deleted.");
+                toast(t("All data deleted."));
               }}
             >
-              Delete all
+              {t("Delete all")}
             </Button>
           </>
         }

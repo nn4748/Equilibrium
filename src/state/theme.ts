@@ -1,17 +1,10 @@
 "use client";
 
 import { create } from "zustand";
+import { THEME_STORAGE_KEY } from "@/lib/boot";
 
 export type ThemePreference = "dark" | "light" | "system";
 export type ResolvedTheme = "dark" | "light";
-
-export const THEME_STORAGE_KEY = "eq:theme";
-
-/**
- * Inline script executed before first paint so the correct theme is applied
- * without a flash. Kept dependency-free and tiny; mirrors `resolveTheme`.
- */
-export const themeBootScript = `(function(){try{var p=localStorage.getItem("${THEME_STORAGE_KEY}");var t=p==="light"||p==="dark"?p:(p==="system"&&matchMedia("(prefers-color-scheme: light)").matches?"light":"dark");document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme="dark";}})();`;
 
 function readPreference(): ThemePreference {
   try {

@@ -3,15 +3,16 @@
 import { motion } from "motion/react";
 import { Check, SkipForward, Undo2 } from "lucide-react";
 import type { DayEntry } from "@/domain/schedule";
-import { describeSchedule } from "@/domain/schedule";
+import { describeSchedule } from "@/i18n";
 import { cn } from "@/lib/cn";
 import { IconButton } from "@/ui/button";
+import { t } from "@/i18n";
 
 const TIME_LABEL = { anytime: "Any time", morning: "Morning", afternoon: "Afternoon", evening: "Evening" } as const;
 
 export function WeightMarks({ weight, className }: { weight: number; className?: string }) {
   return (
-    <span className={cn("inline-flex items-end gap-[2px]", className)} role="img" aria-label={`Importance ${weight} of 5`} title={`Importance ${weight} of 5`}>
+    <span className={cn("inline-flex items-end gap-[2px]", className)} role="img" aria-label={t("Importance {n} of 5", { n: weight })} title={t("Importance {n} of 5", { n: weight })}>
       {[1, 2, 3, 4, 5].map((w) => (
         <span key={w} className={cn("w-[3px]", w <= weight ? "bg-current" : "bg-line")} style={{ height: 4 + w * 2 }} />
       ))}
@@ -46,8 +47,8 @@ export function HabitRow({
         onClick={onToggle}
         disabled={skipped}
         aria-pressed={done}
-        aria-label={`${habit.title}${done ? ", done" : ""}`}
-        title={`Shortcut: ${index + 1}`}
+        aria-label={done ? t("{name}, done", { name: habit.title }) : habit.title}
+        title={t("Shortcut: {n}", { n: index + 1 })}
         whileTap={{ scale: 0.985 }}
         className={cn(
           "flex min-h-[4.5rem] flex-1 items-center gap-4 py-3 pl-1 pr-2 text-left transition-colors md:gap-5",
@@ -73,19 +74,19 @@ export function HabitRow({
         <span className="flex min-w-0 flex-1 flex-col gap-1">
           <span className={cn("truncate text-[17px] font-medium transition-colors", done || skipped ? "text-muted-strong line-through decoration-line" : "text-fg-strong")}>{habit.title}</span>
           <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-strong">
-            <span>{habit.category}</span>
+            <span>{t(habit.category)}</span>
             <span aria-hidden>·</span>
-            <span>{habit.scheduleType === "weekly" ? describeSchedule(habit) : TIME_LABEL[habit.preferredTime]}</span>
-            {skipped ? <span className="font-medium text-fg">Skipped today</span> : null}
-            {missed ? <span className="font-medium text-fg">Missed</span> : null}
-            {habit.scheduleType === "weekly" && entry.counted && !done ? <span className="font-medium text-fg">Do it today</span> : null}
+            <span>{habit.scheduleType === "weekly" ? describeSchedule(habit) : t(TIME_LABEL[habit.preferredTime])}</span>
+            {skipped ? <span className="font-medium text-fg">{t("Skipped today")}</span> : null}
+            {missed ? <span className="font-medium text-fg">{t("Missed")}</span> : null}
+            {habit.scheduleType === "weekly" && entry.counted && !done ? <span className="font-medium text-fg">{t("Do it today")}</span> : null}
           </span>
         </span>
         <WeightMarks weight={entry.weight} className={cn("shrink-0", done ? "text-fg" : "text-muted-strong")} />
       </motion.button>
       <div className="flex items-center pl-1">
-        <IconButton label={skipped ? `Undo skip for ${habit.title}` : `Skip ${habit.title} today`} size="md" onClick={onSkip} disabled={done} className="md:opacity-0 md:focus-visible:opacity-100 md:group-hover:opacity-100">
-          {skipped ? <Undo2 className="size-4" strokeWidth={1.5} /> : <SkipForward className="size-4" strokeWidth={1.5} />}
+        <IconButton label={skipped ? t("Undo skip: {name}", { name: habit.title }) : t("Skip today: {name}", { name: habit.title })} size="md" onClick={onSkip} disabled={done} className="md:opacity-0 md:focus-visible:opacity-100 md:group-hover:opacity-100">
+          {skipped ? <Undo2 className="size-4" strokeWidth={1.5} /> : <SkipForward className="flip-rtl size-4" strokeWidth={1.5} />}
         </IconButton>
       </div>
     </li>

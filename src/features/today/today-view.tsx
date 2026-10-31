@@ -3,7 +3,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { Plus } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { formatKey } from "@/domain/dates";
 import type { DayEntry } from "@/domain/schedule";
 import { averageScore } from "@/domain/scoring";
 import { useActiveHabits, useDay, useHistory, useStructure } from "@/state/derived";
@@ -15,6 +14,7 @@ import { EmptyState } from "@/ui/feedback";
 import { Page, PageHeader } from "@/ui/page";
 import { toast } from "@/ui/toast";
 import { HabitRow } from "./habit-row";
+import { formatDate, t } from "@/i18n";
 
 const ORDER = { morning: 0, anytime: 1, afternoon: 2, evening: 3 } as const;
 
@@ -22,19 +22,19 @@ const ORDER = { morning: 0, anytime: 1, afternoon: 2, evening: 3 } as const;
 function ProgressCard({ done, total, score, week }: { done: number; total: number; score: number | null; week: number | null }) {
   const all = total > 0 && done === total;
   return (
-    <section aria-label="Today's progress" className="border border-line bg-bg-raised p-5 md:p-6">
+    <section aria-label={t("Today's progress")} className="border border-line bg-bg-raised p-5 md:p-6">
       <div className="flex items-end justify-between gap-4">
         <p className="text-[28px] font-semibold leading-none tracking-[-0.02em] text-fg-strong tabular-nums">
-          {done} <span className="text-[18px] font-medium text-muted-strong">of {total} done</span>
+          {done} <span className="text-[18px] font-medium text-muted-strong">{t("of {total} done", { total })}</span>
         </p>
         <p className="text-[14px] text-muted-strong tabular-nums">{score === null ? "" : `${Math.round(score)}%`}</p>
       </div>
-      <div className="mt-4 h-2 bg-surface-2" role="progressbar" aria-label="Done today" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(score ?? 0)}>
+      <div className="mt-4 h-2 bg-surface-2" role="progressbar" aria-label={t("Done today")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(score ?? 0)}>
         <motion.div className="h-full bg-fg" initial={false} animate={{ width: `${score ?? 0}%` }} transition={{ type: "spring", stiffness: 140, damping: 24 }} />
       </div>
       <AnimatePresence mode="wait" initial={false}>
         <motion.p key={all ? "all" : "some"} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-3 text-[14px] text-muted-strong">
-          {all ? "All done for today. Nice work." : week === null ? "Tap a habit when you've done it." : `Your average this week: ${Math.round(week)}%`}
+          {all ? t("All done for today. Nice work.") : week === null ? t("Tap a habit when you've done it.") : t("Your average this week: {n}%", { n: Math.round(week) })}
         </motion.p>
       </AnimatePresence>
     </section>
@@ -64,13 +64,13 @@ export function TodayView() {
     const completed = toggleCompletion(e.habit.id);
     if (completed) {
       navigator.vibrate?.(8);
-      toast(`Done: ${e.habit.title}`, { action: { label: "Undo", run: () => toggleCompletion(e.habit.id) } });
+      toast(t("Done: {name}", { name: e.habit.title }), { action: { label: t("Undo"), run: () => toggleCompletion(e.habit.id) } });
     }
   };
   const skip = (e: DayEntry) => {
     const skipped = e.status === "skipped";
     setLog(e.habit.id, today, skipped ? null : "skipped");
-    if (!skipped) toast(`Skipped for today: ${e.habit.title}`, { action: { label: "Undo", run: () => setLog(e.habit.id, today, null) } });
+    if (!skipped) toast(t("Skipped for today: {name}", { name: e.habit.title }), { action: { label: t("Undo"), run: () => setLog(e.habit.id, today, null) } });
   };
 
   // Number keys 1–9 toggle the matching row.
@@ -88,26 +88,26 @@ export function TodayView() {
     return () => window.removeEventListener("keydown", onKey);
   });
 
-  const dateLine = formatKey(today, { weekday: "long", day: "numeric", month: "long" });
+  const dateLine = formatDate(today, { weekday: "long", day: "numeric", month: "long" });
   const addButton = (
     <Button variant="secondary" onClick={() => openEditor(null)}>
-      <Plus className="size-4" strokeWidth={1.75} /> Add habit
+      <Plus className="size-4" strokeWidth={1.75} /> {t("Add habit")}
     </Button>
   );
 
   if (active.length === 0) {
     return (
       <Page>
-        <PageHeader title="Today" subtitle={dateLine} />
+        <PageHeader title={t("Today")} subtitle={dateLine} />
         <EmptyState
-          title="You don't have any habits yet."
+          title={t("You don't have any habits yet.")}
           action={
             <Button onClick={() => openEditor(null)}>
-              <Plus className="size-4" strokeWidth={1.75} /> Add your first habit
+              <Plus className="size-4" strokeWidth={1.75} /> {t("Add your first habit")}
             </Button>
           }
         >
-          Add one or two to start. You can change them any time.
+          {t("Add one or two to start. You can change them any time.")}
         </EmptyState>
       </Page>
     );
@@ -115,16 +115,16 @@ export function TodayView() {
 
   return (
     <Page className="max-w-[880px]">
-      <PageHeader title="Today" subtitle={dateLine} actions={<span className="hidden md:block">{addButton}</span>} />
+      <PageHeader title={t("Today")} subtitle={dateLine} actions={<span className="hidden md:block">{addButton}</span>} />
 
       <ProgressCard done={metrics.completedCount} total={metrics.scheduledCount} score={metrics.balanceScore} week={week} />
 
       <section aria-labelledby="todo" className="mt-10">
         <h2 id="todo" className="border-b border-line pb-3 text-heading font-semibold text-fg-strong">
-          Your habits today
+          {t("Your habits today")}
         </h2>
         {due.length === 0 ? (
-          <p className="py-8 text-muted-strong">Nothing planned for today.</p>
+          <p className="py-8 text-muted-strong">{t("Nothing planned for today.")}</p>
         ) : (
           <ul>
             {due.map((e, i) => (
@@ -138,9 +138,9 @@ export function TodayView() {
         <section aria-labelledby="flexible" className="mt-10">
           <div className="border-b border-line pb-3">
             <h2 id="flexible" className="text-heading font-semibold text-fg-strong">
-              This week
+              {t("This week")}
             </h2>
-            <p className="mt-1 text-[14px] text-muted-strong">Do these on any day this week.</p>
+            <p className="mt-1 text-[14px] text-muted-strong">{t("Do these on any day this week.")}</p>
           </div>
           <ul>
             {flexible.map((e, i) => (
@@ -155,7 +155,7 @@ export function TodayView() {
       <section aria-labelledby="structure" className="mt-14">
         <div className="mb-4 flex flex-col gap-1">
           <h2 id="structure" className="text-heading font-semibold text-fg-strong">
-            Your bridge
+            {t("Your bridge")}
           </h2>
           <p className="text-[14px] text-muted-strong">
             Each habit is one beam. When you do a habit, its beam turns solid. A habit you missed recently shows as an outline. Do them all and the bridge stands level.
@@ -166,10 +166,10 @@ export function TodayView() {
             members={structure.members}
             stress={structure.stress}
             equilibrium={structure.equilibrium}
-            label={`Bridge with ${structure.members.length} beams. ${metrics.completedCount} of ${metrics.scheduledCount} done today.`}
+            label={t("Bridge with {n} beams. {done} of {total} done today.", { n: structure.members.length, done: metrics.completedCount, total: metrics.scheduledCount })}
             className="h-[240px] sm:h-[320px]"
           />
-          {structure.equilibrium ? <p className="pointer-events-none absolute bottom-3 left-4 text-[13px] font-medium text-fg-strong">Level and steady</p> : null}
+          {structure.equilibrium ? <p className="pointer-events-none absolute bottom-3 left-4 text-[13px] font-medium text-fg-strong">{t("Level and steady")}</p> : null}
         </div>
       </section>
     </Page>

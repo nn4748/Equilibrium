@@ -142,7 +142,7 @@ export function Specimen() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-wrap items-center gap-3">
             <Button size="lg">
-              Enter Equilibrium <ArrowRight className="size-4 transition-transform group-hover/button:translate-x-0.5" strokeWidth={1.5} />
+              Enter Equilibrium <ArrowRight className="flip-rtl size-4 transition-transform group-hover/button:translate-x-0.5" strokeWidth={1.5} />
             </Button>
             <Button>Primary</Button>
             <Button variant="secondary">Secondary</Button>

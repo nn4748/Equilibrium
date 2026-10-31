@@ -2,12 +2,13 @@
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
-import { addDays, addMonths, daysInMonth, formatKey, startOfMonth, startOfWeek } from "@/domain/dates";
+import { addDays, addMonths, daysInMonth, startOfMonth, startOfWeek } from "@/domain/dates";
 import type { History } from "@/domain/scoring";
 import { cn } from "@/lib/cn";
 import { IconButton } from "@/ui/button";
 import { Data, Label } from "@/ui/typography";
 import { describeDay, heatLevel } from "./heat";
+import { formatDate, t, weekdayName } from "@/i18n";
 
 /** Month at a glance: each day filled by its balance level, with month totals. */
 export function MonthCalendar({ history, weekStartsOn }: { history: History; weekStartsOn: 0 | 1 }) {
@@ -39,19 +40,19 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
     return { days: list, stats: { avg: counted ? sum / counted : null, perfect, completions } };
   }, [month, weekStartsOn, history]);
 
-  const heads = weekStartsOn === 1 ? ["M", "T", "W", "T", "F", "S", "S"] : ["S", "M", "T", "W", "T", "F", "S"];
+  const heads = Array.from({ length: 7 }, (_, i) => weekdayName((i + weekStartsOn) % 7, "narrow"));
   const shown = selected ?? history.today;
 
   return (
     <div className="flex flex-col gap-5">
       <div className="flex items-center justify-between">
-        <h3 className="text-[16px] font-medium text-fg-strong">{formatKey(month, { month: "long", year: "numeric" })}</h3>
+        <h3 className="text-[16px] font-medium text-fg-strong">{formatDate(month, { month: "long", year: "numeric" })}</h3>
         <div className="flex">
-          <IconButton label="Previous month" size="sm" disabled={month <= first} onClick={() => setMonth(addMonths(month, -1))}>
-            <ChevronLeft className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Previous month")} size="sm" disabled={month <= first} onClick={() => setMonth(addMonths(month, -1))}>
+            <ChevronLeft className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
-          <IconButton label="Next month" size="sm" disabled={month >= current} onClick={() => setMonth(addMonths(month, 1))}>
-            <ChevronRight className="size-4" strokeWidth={1.5} />
+          <IconButton label={t("Next month")} size="sm" disabled={month >= current} onClick={() => setMonth(addMonths(month, 1))}>
+            <ChevronRight className="flip-rtl size-4" strokeWidth={1.5} />
           </IconButton>
         </div>
       </div>
@@ -73,7 +74,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
               type="button"
               disabled={future}
               onClick={() => setSelected(key)}
-              aria-label={`${formatKey(key, { day: "numeric", month: "long" })}: ${describeDay(m)}`}
+              aria-label={`${formatDate(key, { day: "numeric", month: "long" })}: ${describeDay(m)}`}
               aria-pressed={key === selected}
               className={cn(
                 "relative flex aspect-square items-start justify-start p-1.5 tabular-nums text-[12px] transition-[outline-color]",
@@ -90,12 +91,12 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
         })}
       </div>
       <p className="tabular-nums text-[12px] text-fg">
-        {formatKey(shown, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(history.days.get(shown))}</span>
+        {formatDate(shown, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(history.days.get(shown))}</span>
       </p>
       <dl className="grid grid-cols-3 border-t border-line pt-4">
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Average score</Label>
+            <Label>{t("Average score")}</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.avg === null ? "—" : Math.round(stats.avg)}</Data>
@@ -103,7 +104,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
         </div>
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Perfect days</Label>
+            <Label>{t("Perfect days")}</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.perfect}</Data>
@@ -111,7 +112,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
         </div>
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Habits done</Label>
+            <Label>{t("Habits done")}</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.completions}</Data>

@@ -68,8 +68,9 @@
   --color-inverse-fg: var(--inverse-fg);
   --color-scrim: var(--scrim);
 
-  --font-display: var(--font-app), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-app), ui-sans-serif, system-ui, sans-serif;
+  /* Latin glyphs come from Manrope, Arabic glyphs fall through to IBM Plex Sans Arabic. */
+  --font-display: var(--font-app), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-app), var(--font-arabic), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-display);
 
   --shadow-layer: var(--shadow-layer);
@@ -124,6 +125,17 @@
     line-height: var(--text-body--line-height);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Charts, drawings and the 3D view read left to right in both languages. */
+  svg,
+  canvas {
+    direction: ltr;
+  }
+
+  /* Directional icons point the reading way. */
+  [dir="rtl"] .flip-rtl {
+    transform: scaleX(-1);
   }
 
   ::selection {

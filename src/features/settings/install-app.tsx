@@ -4,6 +4,7 @@ import { Download, Share } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/ui/button";
 import { toast } from "@/ui/toast";
+import { t } from "@/i18n";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -43,7 +44,7 @@ export function InstallApp() {
     };
   }, []);
 
-  if (platform === "installed") return <p className="tabular-nums text-[12px] text-fg">Installed on this device</p>;
+  if (platform === "installed") return <p className="tabular-nums text-[12px] text-fg">{t("Installed on this device")}</p>;
 
   if (platform === "prompt" && deferred)
     return (
@@ -52,11 +53,11 @@ export function InstallApp() {
         onClick={async () => {
           await deferred.prompt();
           const { outcome } = await deferred.userChoice;
-          if (outcome === "accepted") toast("Equilibrium is on your home screen.");
+          if (outcome === "accepted") toast(t("Equilibrium is on your home screen."));
           setDeferred(null);
         }}
       >
-        <Download className="size-4" strokeWidth={1.5} /> Install app
+        <Download className="size-4" strokeWidth={1.5} /> {t("Install app")}
       </Button>
     );
 
@@ -64,11 +65,11 @@ export function InstallApp() {
     return (
       <ol className="flex max-w-xs flex-col gap-1.5 text-[13px] text-muted-strong md:text-right">
         <li>
-          1. Tap <Share className="inline size-3.5 align-[-2px] text-fg" strokeWidth={1.75} aria-label="Share" /> in Safari
+          {t("1. Tap")} <Share className="inline size-3.5 align-[-2px] text-fg" strokeWidth={1.75} aria-label={t("Share")} /> {t("in Safari")}
         </li>
-        <li>2. Choose “Add to Home Screen”</li>
+        <li>{t("2. Choose “Add to Home Screen”")}</li>
       </ol>
     );
 
-  return <p className="max-w-xs text-[13px] text-muted-strong md:text-right">Use your browser menu: “Install app” or “Add to Home screen”.</p>;
+  return <p className="max-w-xs text-[13px] text-muted-strong md:text-right">{t("Use your browser menu: “Install app” or “Add to Home screen”.")}</p>;
 }

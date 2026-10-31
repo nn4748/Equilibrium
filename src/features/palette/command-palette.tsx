@@ -15,6 +15,7 @@ import { useTheme } from "@/state/theme";
 import { useUI } from "@/state/ui-store";
 import { Kbd } from "@/ui/typography";
 import { toast } from "@/ui/toast";
+import { t } from "@/i18n";
 
 interface Command {
   id: string;
@@ -86,40 +87,40 @@ function Palette({ onClose }: { onClose: () => void }) {
     const list: Command[] = [];
     for (const e of entries) {
       if (e.status === "completed")
-        list.push({ id: `undo-${e.habit.id}`, group: "Today", label: `Undo: ${e.habit.title}`, icon: Undo2, keywords: "uncheck", run: () => (toggleCompletion(e.habit.id), onClose()) });
+        list.push({ id: `undo-${e.habit.id}`, group: "Today", label: t("Undo: {name}", { name: e.habit.title }), icon: Undo2, keywords: "uncheck", run: () => (toggleCompletion(e.habit.id), onClose()) });
       else if (e.status === "pending" || e.status === "optional")
         list.push({
           id: `done-${e.habit.id}`,
           group: "Today",
-          label: `Mark done: ${e.habit.title}`,
+          label: t("Mark done: {name}", { name: e.habit.title }),
           icon: Check,
           keywords: "done check",
           run: () => {
             toggleCompletion(e.habit.id);
-            toast(`Done: ${e.habit.title}`, { action: { label: "Undo", run: () => toggleCompletion(e.habit.id) } });
+            toast(t("Done: {name}", { name: e.habit.title }), { action: { label: t("Undo"), run: () => toggleCompletion(e.habit.id) } });
             onClose();
           },
         });
     }
     list.push(
-      { id: "new", group: "Actions", label: "New habit", icon: Plus, keywords: "create add", run: () => openEditor(null) },
-      { id: "focus", group: "Actions", label: "Start focus timer", icon: Timer, keywords: "pomodoro timer", run: go("/focus") },
-      { id: "theme", group: "Actions", label: "Switch light / dark", icon: Moon, keywords: "dark light", run: () => (toggleTheme(), onClose()) },
+      { id: "new", group: "Actions", label: t("New habit"), icon: Plus, keywords: "create add", run: () => openEditor(null) },
+      { id: "focus", group: "Actions", label: t("Start focus timer"), icon: Timer, keywords: "pomodoro timer", run: go("/focus") },
+      { id: "theme", group: "Actions", label: t("Switch light / dark"), icon: Moon, keywords: "dark light", run: () => (toggleTheme(), onClose()) },
       {
         id: "export",
         group: "Actions",
-        label: "Save data to a file",
+        label: t("Save data to a file"),
         icon: Download,
         keywords: "backup json download",
         run: () => {
           downloadText(`equilibrium-${useData.getState().today}.json`, useData.getState().exportJSON());
-          toast("File saved.");
+          toast(t("File saved."));
           onClose();
         },
       },
     );
-    for (const n of NAV) list.push({ id: `nav-${n.href}`, group: "Go to", label: n.label, hint: n.hint, icon: ArrowRight, run: go(n.href) });
-    for (const h of habits) list.push({ id: `edit-${h.id}`, group: "Habits", label: h.title, hint: h.category, icon: Pencil, keywords: "edit", run: () => openEditor(h.id) });
+    for (const n of NAV) list.push({ id: `nav-${n.href}`, group: "Go to", label: t(n.label), hint: t(n.hint), icon: ArrowRight, run: go(n.href) });
+    for (const h of habits) list.push({ id: `edit-${h.id}`, group: "Habits", label: h.title, hint: t(h.category), icon: Pencil, keywords: "edit", run: () => openEditor(h.id) });
     return list;
   }, [entries, habits, onClose, openEditor, router, toggleCompletion, toggleTheme]);
 
@@ -162,7 +163,7 @@ function Palette({ onClose }: { onClose: () => void }) {
         ref={trapRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Command palette"
+        aria-label={t("Command palette")}
         className="relative flex max-h-[70dvh] w-full max-w-xl flex-col bg-bg-raised shadow-layer"
         initial={{ opacity: 0, y: -8, scale: 0.985 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -179,24 +180,24 @@ function Palette({ onClose }: { onClose: () => void }) {
               setQuery(e.target.value);
               setActive(0);
             }}
-            placeholder="Type to search"
-            aria-label="Search commands"
+            placeholder={t("Type to search")}
+            aria-label={t("Search commands")}
             role="combobox"
             aria-expanded="true"
             aria-controls="palette-list"
             aria-activedescendant={results[current] ? `cmd-${results[current]!.id}` : undefined}
             className="h-14 flex-1 bg-transparent text-[16px] text-fg outline-none"
           />
-          <Kbd>Esc</Kbd>
+          <Kbd>{t("Esc")}</Kbd>
         </div>
         <ul ref={listRef} id="palette-list" role="listbox" className="flex-1 overflow-y-auto py-2">
-          {results.length === 0 ? <li className="px-4 py-8 text-center text-[14px] text-muted-strong">Nothing found.</li> : null}
+          {results.length === 0 ? <li className="px-4 py-8 text-center text-[14px] text-muted-strong">{t("Nothing found.")}</li> : null}
           {results.map((c, i) => {
             const header = c.group !== results[i - 1]?.group ? c.group : null;
             const Icon = c.icon;
             return (
               <li key={c.id} role="presentation">
-                {header ? <div className="label-tech px-4 pb-1.5 pt-3 text-muted">{header}</div> : null}
+                {header ? <div className="label-tech px-4 pb-1.5 pt-3 text-muted">{t(header)}</div> : null}
                 <div
                   id={`cmd-${c.id}`}
                   role="option"

@@ -8,6 +8,7 @@ import { Button } from "@/ui/button";
 import { Sheet } from "@/ui/overlay";
 import { toast } from "@/ui/toast";
 import { HabitForm, type FormErrors } from "./habit-form";
+import { t } from "@/i18n";
 
 /** Create/edit sheet, opened from anywhere through the UI store. */
 export function HabitEditor() {
@@ -16,7 +17,7 @@ export function HabitEditor() {
   const habit = useData((s) => (habitId ? s.habits.find((h) => h.id === habitId) : undefined));
 
   return (
-    <Sheet open={open} onClose={close} title={habit ? "Edit habit" : "New habit"}>
+    <Sheet open={open} onClose={close} title={habit ? t("Edit habit") : t("New habit")}>
       {/* Keyed so the form resets each time the sheet opens. */}
       {open ? <EditorBody key={habitId ?? "new"} habitId={habit?.id ?? null} initial={habit ? inputFrom(habit) : EMPTY_INPUT} onDone={close} /> : null}
     </Sheet>
@@ -37,10 +38,10 @@ function EditorBody({ habitId, initial, onDone }: { habitId: string | null; init
     if (Object.keys(found).length) return;
     if (habitId) {
       updateHabit(habitId, value);
-      toast("Saved.");
+      toast(t("Saved."));
     } else {
       createHabit(value);
-      toast(`Added: ${value.title.trim()}`);
+      toast(t("Added: {name}", { name: value.title.trim() }));
     }
     onDone();
   };
@@ -51,9 +52,9 @@ function EditorBody({ habitId, initial, onDone }: { habitId: string | null; init
       {habitId ? <p className="text-[13px] text-muted-strong">Changes start from today. Past days stay as they were.</p> : null}
       <div className="safe-bottom sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-3 border-t border-line bg-bg-raised px-6 py-4">
         <Button variant="ghost" onClick={onDone}>
-          Cancel
+          {t("Cancel")}
         </Button>
-        <Button type="submit">{habitId ? "Save changes" : "Add habit"}</Button>
+        <Button type="submit">{habitId ? t("Save changes") : t("Add habit")}</Button>
       </div>
     </form>
   );

@@ -17,12 +17,15 @@ import { Button } from "@/ui/button";
 import { Segmented, WeightStepper } from "@/ui/controls";
 import { Input } from "@/ui/field";
 import { Label } from "@/ui/typography";
+import { t } from "@/i18n";
+import { LangToggle } from "@/features/shell/lang-toggle";
 
 type Draft = HabitInput & { key: string };
 
 const toDraft = (s: (typeof SUGGESTIONS)[number]): Draft => ({
   key: s.title,
-  title: s.title,
+  // Stored in the language the habit was picked in; titles are the user's own text from here on.
+  title: t(s.title),
   description: "",
   category: s.category,
   weight: s.weight,
@@ -105,14 +108,15 @@ export function OnboardingView() {
       <header className="flex h-16 items-center justify-between gap-4 border-b border-line px-4 md:px-12">
         <Wordmark />
         <div className="flex items-center gap-6">
-          <div className="hidden items-center gap-3 sm:flex" aria-label={`Step ${step + 1} of 3`}>
+          <div className="hidden items-center gap-3 sm:flex" aria-label={t("Step {n} of 3", { n: step + 1 })}>
             {[0, 1, 2].map((i) => (
               <span key={i} className={cn("h-px w-8 transition-colors duration-500", i <= step ? "bg-fg" : "bg-line")} />
             ))}
             <span className="text-[13px] text-muted-strong">Step {step + 1} of 3</span>
           </div>
+          <LangToggle className="h-9 min-w-9" />
           <button type="button" onClick={() => void finish(false)} className="label-tech h-10 text-muted-strong underline-offset-4 hover:text-fg hover:underline">
-            Skip
+            {t("Skip")}
           </button>
         </div>
       </header>
@@ -132,20 +136,20 @@ export function OnboardingView() {
             {step === 0 ? (
               <div className="grid flex-1 items-center gap-12 lg:grid-cols-2">
                 <div className="flex flex-col gap-8">
-                  <Label>Step 1 of 3</Label>
-                  <h1 className="text-display font-semibold text-fg-strong">Welcome to Equilibrium</h1>
+                  <Label>{t("Step 1 of 3")}</Label>
+                  <h1 className="text-display font-semibold text-fg-strong">{t("Welcome to Equilibrium")}</h1>
                   <p className="max-w-md text-[17px] leading-relaxed text-muted-strong">
-                    A simple way to build good habits. Each habit is a beam in your bridge. Do your habits and the bridge stays strong and level.
+                    {t("A simple way to build good habits. Each habit is a beam in your bridge. Do your habits and the bridge stays strong and level.")}
                   </p>
                   <dl className="grid grid-cols-3 gap-px border border-line bg-line">
                     {[
                       ["1", "Pick a few habits"],
                       ["2", "Check them off each day"],
                       ["3", "Watch your progress"],
-                    ].map(([t, d]) => (
-                      <div key={t} className="flex flex-col gap-1.5 bg-bg p-4">
-                        <dt className="text-[22px] font-semibold text-fg-strong tabular-nums">{t}</dt>
-                        <dd className="text-[14px] text-fg">{d}</dd>
+                    ].map(([num, d]) => (
+                      <div key={num} className="flex flex-col gap-1.5 bg-bg p-4">
+                        <dt className="text-[22px] font-semibold text-fg-strong tabular-nums">{num}</dt>
+                        <dd className="text-[14px] text-fg">{t(d ?? "")}</dd>
                       </div>
                     ))}
                   </dl>
@@ -157,9 +161,9 @@ export function OnboardingView() {
             {step === 1 ? (
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-4">
-                  <Label>Step 2 of 3</Label>
-                  <h1 className="text-title font-semibold text-fg-strong">Pick your habits</h1>
-                  <p className="max-w-lg text-muted-strong">Choose 2 to 5 to start. You can change them later.</p>
+                  <Label>{t("Step 2 of 3")}</Label>
+                  <h1 className="text-title font-semibold text-fg-strong">{t("Pick your habits")}</h1>
+                  <p className="max-w-lg text-muted-strong">{t("Choose 2 to 5 to start. You can change them later.")}</p>
                 </div>
                 <ul className="grid gap-px border border-line bg-line sm:grid-cols-2">
                   {SUGGESTIONS.map((s) => {
@@ -176,8 +180,8 @@ export function OnboardingView() {
                             {on ? <Check className="size-3.5" strokeWidth={2.25} /> : null}
                           </span>
                           <span className="flex flex-1 flex-col gap-0.5">
-                            <span className="text-[15px] text-fg-strong">{s.title}</span>
-                            <span className="text-[12px] text-muted-strong">{s.note}</span>
+                            <span className="text-[15px] text-fg-strong">{t(s.title)}</span>
+                            <span className="text-[12px] text-muted-strong">{t(s.note)}</span>
                           </span>
                           <WeightMarks weight={s.weight} className="text-muted-strong" />
                         </button>
@@ -192,9 +196,9 @@ export function OnboardingView() {
                     addCustom();
                   }}
                 >
-                  <Input value={custom} onChange={(e) => setCustom(e.target.value)} maxLength={60} placeholder="Or type your own" aria-label="Custom habit name" />
+                  <Input value={custom} onChange={(e) => setCustom(e.target.value)} maxLength={60} placeholder={t("Or type your own")} aria-label={t("Custom habit name")} />
                   <Button type="submit" variant="secondary" disabled={!custom.trim()}>
-                    <Plus className="size-4" strokeWidth={1.5} /> Add
+                    <Plus className="size-4" strokeWidth={1.5} /> {t("Add")}
                   </Button>
                 </form>
                 {drafts.filter((d) => d.key.startsWith("custom-")).length ? (
@@ -203,7 +207,7 @@ export function OnboardingView() {
                       .filter((d) => d.key.startsWith("custom-"))
                       .map((d) => (
                         <li key={d.key}>
-                          <button type="button" onClick={() => toggle(d)} className="h-9 border border-fg px-3 text-[13px] text-fg" aria-label={`Remove ${d.title}`}>
+                          <button type="button" onClick={() => toggle(d)} className="h-9 border border-fg px-3 text-[13px] text-fg" aria-label={t("Remove: {name}", { name: d.title })}>
                             {d.title} ×
                           </button>
                         </li>
@@ -216,19 +220,19 @@ export function OnboardingView() {
             {step === 2 ? (
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-4">
-                  <Label>Step 3 of 3</Label>
-                  <h1 className="text-title font-semibold text-fg-strong">How important is each one?</h1>
-                  <p className="max-w-lg text-muted-strong">More important habits count more toward your daily score. You can also choose how often.</p>
+                  <Label>{t("Step 3 of 3")}</Label>
+                  <h1 className="text-title font-semibold text-fg-strong">{t("How important is each one?")}</h1>
+                  <p className="max-w-lg text-muted-strong">{t("More important habits count more toward your daily score. You can also choose how often.")}</p>
                 </div>
                 {drafts.length === 0 ? (
-                  <p className="text-muted-strong">No habits picked. Go back, or finish and add them later.</p>
+                  <p className="text-muted-strong">{t("No habits picked. Go back, or finish and add them later.")}</p>
                 ) : (
                   <ul className="border-t border-line">
                     {drafts.map((d) => (
                       <li key={d.key} className="grid gap-5 border-b border-line py-5 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-center md:gap-8">
                         <span className="text-[16px] text-fg-strong">{d.title}</span>
-                        <WeightStepper value={d.weight} onChange={(w: Weight) => update(d.key, { weight: w })} label={`Weight for ${d.title}`} />
-                        <Segmented label={`Schedule for ${d.title}`} options={SCHEDULES} value={d.scheduleType} onChange={(scheduleType) => update(d.key, { scheduleType })} size="sm" />
+                        <WeightStepper value={d.weight} onChange={(w: Weight) => update(d.key, { weight: w })} label={t("Importance: {name}", { name: d.title })} />
+                        <Segmented label={t("How often: {name}", { name: d.title })} options={SCHEDULES} value={d.scheduleType} onChange={(scheduleType) => update(d.key, { scheduleType })} size="sm" />
                       </li>
                     ))}
                   </ul>
@@ -243,7 +247,7 @@ export function OnboardingView() {
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-4 md:px-12">
           {step > 0 ? (
             <Button variant="ghost" onClick={() => go(step - 1)}>
-              <ArrowLeft className="size-4" strokeWidth={1.5} /> Back
+              <ArrowLeft className="flip-rtl size-4" strokeWidth={1.5} /> {t("Back")}
             </Button>
           ) : (
             <Button
@@ -254,16 +258,16 @@ export function OnboardingView() {
                 router.replace("/today");
               }}
             >
-              Try with sample data
+              {t("Try with sample data")}
             </Button>
           )}
           {step < 2 ? (
             <Button onClick={() => go(step + 1)} disabled={step === 1 && drafts.length === 0}>
-              {step === 0 ? "Get started" : `Next${drafts.length ? ` (${drafts.length})` : ""}`} <ArrowRight className="size-4" strokeWidth={1.5} />
+              {step === 0 ? t("Get started") : `${t("Next")}${drafts.length ? ` (${drafts.length})` : ""}`} <ArrowRight className="flip-rtl size-4" strokeWidth={1.5} />
             </Button>
           ) : (
             <Button onClick={() => void finish(true)} disabled={status !== "ready"}>
-              Start <ArrowRight className="size-4" strokeWidth={1.5} />
+              {t("Start")} <ArrowRight className="flip-rtl size-4" strokeWidth={1.5} />
             </Button>
           )}
         </div>

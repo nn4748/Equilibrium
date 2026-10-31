@@ -15,7 +15,6 @@ import { restrictToVerticalAxis, restrictToParentElement } from "@dnd-kit/modifi
 import { CSS } from "@dnd-kit/utilities";
 import { Archive, ArchiveRestore, GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { describeSchedule } from "@/domain/schedule";
 import { habitStreak } from "@/domain/streaks";
 import type { Habit } from "@/domain/types";
 import { cn } from "@/lib/cn";
@@ -29,8 +28,10 @@ import { Page, PageHeader } from "@/ui/page";
 import { toast } from "@/ui/toast";
 import { Label } from "@/ui/typography";
 import { WeightMarks } from "@/features/today/habit-row";
+import { describeSchedule, t } from "@/i18n";
 
 const TIME = { anytime: "Any time", morning: "Morning", afternoon: "Afternoon", evening: "Evening" } as const;
+
 
 function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; streak: number }) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: habit.id });
@@ -50,7 +51,7 @@ function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; 
       <button
         ref={setActivatorNodeRef}
         type="button"
-        aria-label={`Reorder ${habit.title}`}
+        aria-label={t("Reorder {name}", { name: habit.title })}
         className="flex h-11 w-8 cursor-grab touch-none items-center justify-center text-muted-strong hover:text-fg active:cursor-grabbing"
         {...attributes}
         {...listeners}
@@ -62,30 +63,30 @@ function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; 
         <span className="truncate text-[16px] text-fg-strong">{habit.title}</span>
         <span className="flex flex-wrap gap-x-3 text-[12px] text-muted-strong md:hidden">
           <span>{describeSchedule(habit)}</span>
-          <span>W{habit.weight}</span>
-          {streak > 1 ? <span>{streak} in a row</span> : null}
+          <span>{t("Importance {n} of 5", { n: habit.weight })}</span>
+          {streak > 1 ? <span>{t("{n} in a row", { n: streak })}</span> : null}
         </span>
         {habit.description ? <span className="hidden truncate text-[13px] text-muted-strong md:block">{habit.description}</span> : null}
       </div>
       <div className="hidden flex-col gap-1 md:flex">
         <span className="text-[14px] text-fg">{describeSchedule(habit)}</span>
         <span className="text-[12px] text-muted-strong">
-          {habit.category} · {TIME[habit.preferredTime]}
+          {t(habit.category)} · {t(TIME[habit.preferredTime])}
         </span>
       </div>
       <div className="hidden items-center gap-4 md:flex">
         <WeightMarks weight={habit.weight} className="text-fg" />
-        <span className="tabular-nums text-[12px] text-muted-strong">{streak > 0 ? `${streak} in a row` : "—"}</span>
+        <span className="tabular-nums text-[12px] text-muted-strong">{streak > 0 ? t("{n} in a row", { n: streak }) : "—"}</span>
       </div>
       <div className="flex items-center">
-        <IconButton label={`Edit ${habit.title}`} onClick={() => openEditor(habit.id)}>
+        <IconButton label={t("Edit: {name}", { name: habit.title })} onClick={() => openEditor(habit.id)}>
           <Pencil className="size-4" strokeWidth={1.5} />
         </IconButton>
         <IconButton
-          label={`Archive ${habit.title}`}
+          label={t("Archive: {name}", { name: habit.title })}
           onClick={() => {
             archiveHabit(habit.id);
-            toast(`Archived: ${habit.title}`, { action: { label: "Undo", run: () => restoreHabit(habit.id) } });
+            toast(t("Archived: {name}", { name: habit.title }), { action: { label: t("Undo"), run: () => restoreHabit(habit.id) } });
           }}
         >
           <Archive className="size-4" strokeWidth={1.5} />
@@ -124,25 +125,25 @@ export function HabitsView() {
   return (
     <Page>
       <PageHeader
-        title="Habits"
-        subtitle={active.length ? `${active.length} habit${active.length === 1 ? "" : "s"}` : undefined}
+        title={t("Habits")}
+        subtitle={active.length ? (active.length === 1 ? t("1 habit") : t("{n} habits", { n: active.length })) : undefined}
         actions={
           <Button onClick={() => openEditor(null)}>
-            <Plus className="size-4" strokeWidth={1.5} /> New habit
+            <Plus className="size-4" strokeWidth={1.5} /> {t("New habit")}
           </Button>
         }
       />
 
       {active.length === 0 ? (
-        <EmptyState title="No habits yet.">Add your first habit to get started.</EmptyState>
+        <EmptyState title={t("No habits yet.")}>{t("Add your first habit to get started.")}</EmptyState>
       ) : (
         <>
           <div className="hidden grid-cols-[auto_auto_minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto] gap-5 border-b border-line pb-3 md:grid">
             <span className="w-8" />
             <span />
-            <Label>Habit</Label>
-            <Label>Schedule</Label>
-            <Label>Importance · streak</Label>
+            <Label>{t("Habit")}</Label>
+            <Label>{t("Schedule")}</Label>
+            <Label>{t("Importance · streak")}</Label>
             <span className="w-20" />
           </div>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd} modifiers={[restrictToVerticalAxis, restrictToParentElement]}>
@@ -154,29 +155,29 @@ export function HabitsView() {
               </ul>
             </SortableContext>
           </DndContext>
-          <p className="mt-4 text-[13px] text-muted-strong">Drag the handle to change the order.</p>
+          <p className="mt-4 text-[13px] text-muted-strong">{t("Drag the handle to change the order.")}</p>
         </>
       )}
 
       {archived.length > 0 ? (
         <section aria-labelledby="archived" className="mt-16">
           <h2 id="archived" className="label-tech border-b border-line pb-3 text-muted-strong">
-            Archived ({archived.length})
+            {t("Archived ({n})", { n: archived.length })}
           </h2>
           <ul>
             {archived.map((h) => (
               <li key={h.id} className="flex items-center gap-4 border-b border-line py-3">
                 <span className="flex-1 truncate text-[15px] text-muted-strong">{h.title}</span>
                 <IconButton
-                  label={`Restore ${h.title}`}
+                  label={t("Restore: {name}", { name: h.title })}
                   onClick={() => {
                     restoreHabit(h.id);
-                    toast(`Restored: ${h.title}`);
+                    toast(t("Restored: {name}", { name: h.title }));
                   }}
                 >
                   <ArchiveRestore className="size-4" strokeWidth={1.5} />
                 </IconButton>
-                <IconButton label={`Delete ${h.title} permanently`} onClick={() => setPendingDelete(h)}>
+                <IconButton label={t("Delete for good: {name}", { name: h.title })} onClick={() => setPendingDelete(h)}>
                   <Trash2 className="size-4" strokeWidth={1.5} />
                 </IconButton>
               </li>
@@ -188,23 +189,23 @@ export function HabitsView() {
       <Dialog
         open={pendingDelete !== null}
         onClose={() => setPendingDelete(null)}
-        title="Delete permanently?"
-        description={pendingDelete ? `“${pendingDelete.title}” and its history will be removed for good.` : undefined}
+        title={t("Delete permanently?")}
+        description={pendingDelete ? t("“{name}” and its history will be removed for good.", { name: pendingDelete.title }) : undefined}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setPendingDelete(null)}>
-              Cancel
+              {t("Cancel")}
             </Button>
             <Button
               onClick={() => {
                 if (pendingDelete) {
                   deleteHabit(pendingDelete.id);
-                  toast(`Deleted: ${pendingDelete.title}`);
+                  toast(t("Deleted: {name}", { name: pendingDelete.title }));
                 }
                 setPendingDelete(null);
               }}
             >
-              Delete
+              {t("Delete")}
             </Button>
           </>
         }
