@@ -1,7 +1,7 @@
 // Equilibrium service worker: makes the installed app open and work offline.
 // All user data lives in localStorage, so only the app shell needs caching.
 
-const VERSION = "eq-v2";
+const VERSION = "eq-v3";
 const SHELL = ["/", "/today", "/overview", "/habits", "/analytics", "/focus", "/journal", "/settings", "/onboarding", "/manifest.webmanifest", "/icons/icon-192.png"];
 
 // Caches each shell page plus the scripts and styles it references, so every
