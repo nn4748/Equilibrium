@@ -226,6 +226,12 @@ export function SettingsView() {
           </Row>
           <p className="mt-4 font-mono text-[12px] text-muted-strong">Stored locally in this browser · {storageUsed()}</p>
         </Group>
+
+        <Group id="about" title="About">
+          <p className="py-5 text-[14px] text-muted-strong">
+            Equilibrium — made by <span className="text-fg">Nourah Aleissa</span>.
+          </p>
+        </Group>
       </div>
 
       <Dialog

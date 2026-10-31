@@ -20,6 +20,8 @@ export const metadata: Metadata = {
   title: { default: "Equilibrium", template: "%s — Equilibrium" },
   description: "Discipline is the architecture of a balanced life. A structural system for habits, focus and reflection.",
   applicationName: "Equilibrium",
+  authors: [{ name: "Nourah Aleissa" }],
+  creator: "Nourah Aleissa",
 };
 
 export const viewport: Viewport = {

@@ -84,8 +84,9 @@ export function Landing() {
         });
 
         // Hero copy leaves as the structure starts to assemble.
+        // autoAlpha also hides it, so faded links can't catch clicks.
         gsap.to("[data-hero]", {
-          opacity: 0,
+          autoAlpha: 0,
           y: reduce ? 0 : -40,
           ease: "none",
           scrollTrigger: { trigger: stage.current, start: "top top", end: "8% top", scrub: true },
@@ -184,7 +185,7 @@ export function Landing() {
               key={c.id}
               data-chapter
               aria-labelledby={`${c.id}-title`}
-              className="absolute inset-x-4 bottom-[8svh] opacity-0 md:inset-x-auto md:bottom-auto md:left-10 md:top-1/2 md:w-[420px] md:-translate-y-1/2"
+              className="pointer-events-none absolute inset-x-4 bottom-[8svh] opacity-0 md:inset-x-auto md:bottom-auto md:left-10 md:top-1/2 md:w-[420px] md:-translate-y-1/2"
             >
               <div className="flex items-center gap-3">
                 <span className="font-mono text-[11px] text-fg">{c.index}</span>
@@ -233,6 +234,9 @@ export function Landing() {
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4">
           <Wordmark />
           <p className="font-mono text-[11px] text-muted-strong">Local-first · Your data never leaves this browser</p>
+          <p className="font-mono text-[11px] text-muted-strong">
+            Made by <span className="text-fg">Nourah Aleissa</span>
+          </p>
         </div>
       </footer>
     </main>
