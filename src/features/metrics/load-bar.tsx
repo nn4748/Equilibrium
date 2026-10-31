@@ -18,8 +18,8 @@ export function LoadBar({ entries, className }: { entries: readonly DayEntry[]; 
   return (
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between">
-        <Label>Remaining load</Label>
-        <span className="font-mono text-data font-tabular text-fg">
+        <Label>Left to do</Label>
+        <span className="tabular-nums text-data font-tabular text-fg">
           {remaining}
           <span className="text-muted-strong"> / {total}</span>
         </span>
@@ -27,7 +27,7 @@ export function LoadBar({ entries, className }: { entries: readonly DayEntry[]; 
       <div className="flex h-3 gap-[3px]" aria-hidden>
         {total === 0 ? <div className="flex-1 bg-hatch" /> : null}
         {counted.map((e) => (
-          <div key={e.habit.id} className="relative border border-line" style={{ flexGrow: e.weight, flexBasis: 0 }} title={`${e.habit.title} · W${e.weight}`}>
+          <div key={e.habit.id} className="relative border border-line" style={{ flexGrow: e.weight, flexBasis: 0 }} title={`${e.habit.title} · importance ${e.weight}`}>
             <motion.div
               className="absolute inset-0 origin-left bg-fg"
               initial={false}

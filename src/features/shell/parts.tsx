@@ -15,7 +15,7 @@ export function Wordmark({ compact = false, className }: { compact?: boolean; cl
         <path d="M1.5 20.5h21M4 20.5 12 4l8 16.5M8 12.25h8" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="miter" />
         <circle cx="12" cy="4" r="1.25" fill="currentColor" />
       </svg>
-      {compact ? null : <span className="font-display text-[15px] font-semibold tracking-[0.22em]">EQUILIBRIUM</span>}
+      {compact ? null : <span className="text-[17px] font-semibold tracking-[-0.01em]">Equilibrium</span>}
     </Link>
   );
 }

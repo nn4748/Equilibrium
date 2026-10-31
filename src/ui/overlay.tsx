@@ -42,7 +42,7 @@ function Header({ title, code, description, onClose, titleId, descId }: Pick<Ove
     <header className="flex items-start justify-between gap-6 border-b border-line px-6 pb-5 pt-6">
       <div className="flex min-w-0 flex-col gap-2">
         {code ? <Label>{code}</Label> : null}
-        <h2 id={titleId} className="text-[1.5rem] font-medium leading-none tracking-[-0.03em] text-fg-strong">
+        <h2 id={titleId} className="text-[1.5rem] font-medium leading-none tracking-[-0.02em] text-fg-strong">
           {title}
         </h2>
         {description ? (

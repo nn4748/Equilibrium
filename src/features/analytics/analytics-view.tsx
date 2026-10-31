@@ -18,14 +18,12 @@ import { useActiveHabits, useHistory } from "@/state/derived";
 import { useData } from "@/state/store";
 import { EmptyState } from "@/ui/feedback";
 import { Page, PageHeader } from "@/ui/page";
-import { Label } from "@/ui/typography";
 import { BarChart, LineChart, RankBars, type Datum } from "./charts";
 
-function Panel({ index, title, note, className, children }: { index: string; title: string; note?: string; className?: string; children: React.ReactNode }) {
+function Panel({ title, note, className, children }: { title: string; note?: string; className?: string; children: React.ReactNode }) {
   return (
     <section className={cn("flex min-w-0 flex-col gap-5 bg-bg p-5 md:p-7", className)}>
       <header className="flex flex-col gap-1.5">
-        <Label>{index}</Label>
         <h2 className="text-heading font-medium text-fg-strong">{title}</h2>
         {note ? <p className="text-[13px] text-muted-strong">{note}</p> : null}
       </header>
@@ -49,28 +47,28 @@ export function AnalyticsView() {
     const series: Datum[] = scoreSeries(history, 91).filter((d) => d.date < today).map((d) => ({
       label: formatKey(d.date, { day: "numeric", month: "short" }),
       value: d.score,
-      detail: d.score === null ? "nothing scheduled" : `balance ${Math.round(d.score)}`,
+      detail: d.score === null ? "nothing planned" : `score ${Math.round(d.score)}%`,
     }));
     const weeks: Datum[] = weeklyScores(history, 12, weekStartsOn).map((w) => ({
       label: formatKey(w.start, { day: "numeric", month: "short" }).replace(" ", " "),
       value: w.score,
-      detail: w.score === null ? "no data" : `average ${pct(w.score)} · ${w.completed}/${w.scheduled} done`,
+      detail: w.score === null ? "no data" : `average ${pct(w.score)}% · ${w.completed} of ${w.scheduled} done`,
     }));
     const months: Datum[] = monthlyScores(history, 12).map((m) => ({
       label: m.label,
       value: m.score,
-      detail: m.score === null ? "no data" : `average ${pct(m.score)} · ${m.completed} completions`,
+      detail: m.score === null ? "no data" : `average ${pct(m.score)}% · ${m.completed} done`,
     }));
     const perf = habitPerformance(habits, logs, today, weekStartsOn, 30, 8);
     const hours = hourDistribution(logs, addDays(today, -89));
     const hourMax = Math.max(1, ...hours);
-    const byHour: Datum[] = hours.map((n, h) => ({ label: String(h).padStart(2, "0"), value: n, detail: `${n} completion${n === 1 ? "" : "s"} between ${String(h).padStart(2, "0")}:00 and ${String(h).padStart(2, "0")}:59` }));
+    const byHour: Datum[] = hours.map((n, h) => ({ label: String(h).padStart(2, "0"), value: n, detail: `${n} done between ${String(h).padStart(2, "0")}:00 and ${String(h).padStart(2, "0")}:59` }));
     const peak = hours.indexOf(Math.max(...hours));
     const order = weekStartsOn === 1 ? [1, 2, 3, 4, 5, 6, 0] : [0, 1, 2, 3, 4, 5, 6];
     const wd = weekdayDistribution(history);
     const byWeekday: Datum[] = order.map((d) => {
       const r = wd[d]!;
-      return { label: WEEKDAY_SHORT[d]!, value: r.rate === null ? null : r.rate * 100, detail: r.rate === null ? "no data" : `${Math.round(r.rate * 100)}% · ${r.completed}/${r.due} done` };
+      return { label: WEEKDAY_SHORT[d]!, value: r.rate === null ? null : r.rate * 100, detail: r.rate === null ? "no data" : `${Math.round(r.rate * 100)}% done · ${r.completed} of ${r.due}` };
     });
     const bandLabels = ["0–19", "20–39", "40–59", "60–79", "80–99", "100"];
     const bands = scoreBands(history);
@@ -83,9 +81,9 @@ export function AnalyticsView() {
   if (tracked < 3) {
     return (
       <Page>
-        <PageHeader index={4} section="Analytics" title="Analytics" />
-        <EmptyState title="Not enough data yet.">
-          Analytics appear after three days of tracking. {tracked > 0 ? `You have ${tracked} so far.` : "Complete today's habits to begin."}
+        <PageHeader title="Stats" />
+        <EmptyState title="Not enough data yet">
+          Charts show up after 3 days of use. {tracked > 0 ? `You have ${tracked} so far.` : "Check off today's habits to start."}
         </EmptyState>
       </Page>
     );
@@ -98,38 +96,38 @@ export function AnalyticsView() {
 
   return (
     <Page>
-      <PageHeader index={4} section="Analytics" title="Analytics" meta={`${tracked} days tracked`} />
+      <PageHeader title="Stats" subtitle={`Based on ${tracked} days`} />
 
       <div className="grid gap-px border border-line bg-line lg:grid-cols-2">
-        <Panel index="A" title="Balance history" note="Daily balance over the last 90 days." className="lg:col-span-2">
-          <LineChart data={data.series} label="Daily balance score, last 90 days" fallback="Hover or use arrow keys to inspect a day." />
+        <Panel title="Your score, day by day" note="The last 90 days. The thick line is the weekly average." className="lg:col-span-2">
+          <LineChart data={data.series} label="Daily score, last 90 days" fallback="Tap or hover over the chart to see a day." />
         </Panel>
 
-        <Panel index="B" title="Weekly trend" note="Average balance per week, last 12 weeks.">
-          <BarChart data={data.weeks} label="Weekly average balance" fallback="Average balance by week starting" labelEvery={3} />
+        <Panel title="Week by week" note="Your average score each week.">
+          <BarChart data={data.weeks} label="Average score each week" fallback="Average score, by week" labelEvery={3} />
         </Panel>
 
-        <Panel index="C" title="Monthly performance" note="Average balance per month.">
-          <BarChart data={data.months} label="Monthly average balance" fallback="Average balance by month" labelEvery={2} />
+        <Panel title="Month by month" note="Your average score each month.">
+          <BarChart data={data.months} label="Average score each month" fallback="Average score, by month" labelEvery={2} />
         </Panel>
 
-        <Panel index="D" title="Strongest habits" note="Completion rate over the last 30 days.">
+        <Panel title="Going well" note="Habits you did most in the last 30 days.">
           {strongest.length ? (
-            <RankBars rows={strongest.map((p) => ({ id: p.habit.id, label: p.habit.title, rate: p.rate, note: `${p.completed} of ${p.due} times` }))} />
+            <RankBars rows={strongest.map((p) => ({ id: p.habit.id, label: p.habit.title, rate: p.rate, note: `Done ${p.completed} of ${p.due} times` }))} />
           ) : (
-            <p className="text-[14px] text-muted-strong">No habits were due in the last 30 days.</p>
+            <p className="text-[14px] text-muted-strong">Nothing was planned in the last 30 days.</p>
           )}
         </Panel>
 
-        <Panel index="E" title="Needs attention" note="Lowest completion rates over the last 30 days.">
+        <Panel title="Needs work" note="Habits you missed most in the last 30 days.">
           {weakest.length ? (
-            <RankBars rows={weakest.map((p) => ({ id: p.habit.id, label: p.habit.title, rate: p.rate, note: `${p.due - p.completed} missed of ${p.due}` }))} />
+            <RankBars rows={weakest.map((p) => ({ id: p.habit.id, label: p.habit.title, rate: p.rate, note: `Missed ${p.due - p.completed} of ${p.due} times` }))} />
           ) : (
-            <p className="text-[14px] text-muted-strong">Track more than three habits to compare.</p>
+            <p className="text-[14px] text-muted-strong">Add a few more habits to compare.</p>
           )}
         </Panel>
 
-        <Panel index="F" title="Consistency" note="Weekly completion rate per habit, last 8 weeks." className="lg:col-span-2">
+        <Panel title="Each habit, week by week" note="How much of each habit you did in the last 8 weeks. Brighter means more." className="lg:col-span-2">
           {data.perf.length ? (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] border-collapse">
@@ -140,7 +138,7 @@ export function AnalyticsView() {
                     </th>
                     {Array.from({ length: 8 }, (_, i) => (
                       <th key={i} scope="col" className="label-tech pb-3 text-center font-normal text-muted-strong">
-                        {i === 7 ? "Now" : `−${7 - i}w`}
+                        {i === 7 ? "This wk" : `${7 - i}w ago`}
                       </th>
                     ))}
                     <th scope="col" className="label-tech pb-3 text-right font-normal text-muted-strong">
@@ -168,41 +166,41 @@ export function AnalyticsView() {
                           </td>
                         );
                       })}
-                      <td className="py-2.5 pl-4 text-right font-mono text-[13px] font-tabular text-fg">{Math.round(p.rate * 100)}%</td>
+                      <td className="py-2.5 pl-4 text-right tabular-nums text-[13px] font-tabular text-fg">{Math.round(p.rate * 100)}%</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : (
-            <p className="text-[14px] text-muted-strong">No habits were due in the last 8 weeks.</p>
+            <p className="text-[14px] text-muted-strong">Nothing was planned in the last 8 weeks.</p>
           )}
         </Panel>
 
-        <Panel index="G" title="Time of day" note={totalCompletions ? `When you complete habits. Busiest hour: ${String(data.peak).padStart(2, "0")}:00.` : "When you complete habits."}>
+        <Panel title="Time of day" note={totalCompletions ? `When you usually finish habits. Most often around ${String(data.peak).padStart(2, "0")}:00.` : "When you usually finish habits."}>
           <BarChart
             data={data.byHour}
             max={data.hourMax}
             ticks={[0, data.hourMax]}
             label="Completions by hour of day, last 90 days"
-            fallback={`${totalCompletions} completions, last 90 days`}
+            fallback={`${totalCompletions} habits done in the last 90 days`}
             labelEvery={6}
           />
         </Panel>
 
-        <Panel index="H" title="By weekday" note="Share of due habits completed on each day of the week.">
-          <BarChart data={data.byWeekday} label="Completion rate by weekday" fallback="Completion rate by weekday" format={(v) => `${v}%`} />
+        <Panel title="Day of the week" note="Which days go best for you.">
+          <BarChart data={data.byWeekday} label="Share done, by day of the week" fallback="Share done, by day of the week" format={(v) => `${v}%`} />
         </Panel>
 
-        <Panel index="I" title="Score distribution" note="How many finished days landed in each balance band.">
-          <BarChart data={data.byBand} max={data.bandMax} ticks={[0, data.bandMax]} label="Days per balance score band" fallback="Days per balance band" />
+        <Panel title="How your days went" note="How many days scored in each range.">
+          <BarChart data={data.byBand} max={data.bandMax} ticks={[0, data.bandMax]} label="Number of days in each score range" fallback="Number of days in each score range" />
         </Panel>
 
-        <Panel index="J" title="By category" note="Completions per category, last 30 days.">
+        <Panel title="By category" note="Habits done in each category, last 30 days.">
           {categoryTotal ? (
-            <RankBars rows={data.categories.map((c) => ({ id: c.category, label: c.category, rate: c.count / categoryTotal, note: `${c.count} completions` }))} />
+            <RankBars rows={data.categories.map((c) => ({ id: c.category, label: c.category, rate: c.count / categoryTotal, note: `${c.count} done` }))} />
           ) : (
-            <p className="text-[14px] text-muted-strong">No completions in the last 30 days.</p>
+            <p className="text-[14px] text-muted-strong">Nothing done in the last 30 days.</p>
           )}
         </Panel>
       </div>

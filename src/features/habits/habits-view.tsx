@@ -57,7 +57,7 @@ function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; 
       >
         <GripVertical className="size-4" strokeWidth={1.5} />
       </button>
-      <span className="hidden font-mono text-[11px] text-muted-strong md:block">{String(index + 1).padStart(2, "0")}</span>
+      <span className="hidden tabular-nums text-[12px] text-muted-strong md:block">{String(index + 1).padStart(2, "0")}</span>
       <div className="flex min-w-0 flex-col gap-1">
         <span className="truncate text-[16px] text-fg-strong">{habit.title}</span>
         <span className="flex flex-wrap gap-x-3 text-[12px] text-muted-strong md:hidden">
@@ -75,7 +75,7 @@ function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; 
       </div>
       <div className="hidden items-center gap-4 md:flex">
         <WeightMarks weight={habit.weight} className="text-fg" />
-        <span className="font-mono text-[12px] text-muted-strong">{streak > 0 ? `${streak}× run` : "—"}</span>
+        <span className="tabular-nums text-[12px] text-muted-strong">{streak > 0 ? `${streak} in a row` : "—"}</span>
       </div>
       <div className="flex items-center">
         <IconButton label={`Edit ${habit.title}`} onClick={() => openEditor(habit.id)}>
@@ -85,7 +85,7 @@ function SortableHabit({ habit, index, streak }: { habit: Habit; index: number; 
           label={`Archive ${habit.title}`}
           onClick={() => {
             archiveHabit(habit.id);
-            toast(`“${habit.title}” archived. Its history is kept.`, { action: { label: "Undo", run: () => restoreHabit(habit.id) } });
+            toast(`Archived: ${habit.title}`, { action: { label: "Undo", run: () => restoreHabit(habit.id) } });
           }}
         >
           <Archive className="size-4" strokeWidth={1.5} />
@@ -114,7 +114,6 @@ export function HabitsView() {
   );
 
   const streaks = useMemo(() => new Map(active.map((h) => [h.id, habitStreak(h, logs, today, weekStartsOn)])), [active, logs, today, weekStartsOn]);
-  const totalLoad = active.reduce((s, h) => s + h.weight, 0);
 
   const onDragEnd = ({ active: dragged, over }: DragEndEvent) => {
     if (!over || dragged.id === over.id) return;
@@ -125,10 +124,8 @@ export function HabitsView() {
   return (
     <Page>
       <PageHeader
-        index={3}
-        section="Habits"
         title="Habits"
-        meta={active.length ? `${active.length} active · load ${totalLoad}` : undefined}
+        subtitle={active.length ? `${active.length} habit${active.length === 1 ? "" : "s"}` : undefined}
         actions={
           <Button onClick={() => openEditor(null)}>
             <Plus className="size-4" strokeWidth={1.5} /> New habit
@@ -137,15 +134,15 @@ export function HabitsView() {
       />
 
       {active.length === 0 ? (
-        <EmptyState title="No habits yet.">Add a habit to start building your structure. Order and weight decide where it sits.</EmptyState>
+        <EmptyState title="No habits yet.">Add your first habit to get started.</EmptyState>
       ) : (
         <>
           <div className="hidden grid-cols-[auto_auto_minmax(0,1.6fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto] gap-5 border-b border-line pb-3 md:grid">
             <span className="w-8" />
-            <Label>No.</Label>
+            <span />
             <Label>Habit</Label>
             <Label>Schedule</Label>
-            <Label>Load · run</Label>
+            <Label>Importance · streak</Label>
             <span className="w-20" />
           </div>
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd} modifiers={[restrictToVerticalAxis, restrictToParentElement]}>
@@ -157,14 +154,14 @@ export function HabitsView() {
               </ul>
             </SortableContext>
           </DndContext>
-          <p className="mt-4 text-[13px] text-muted-strong">Drag to reorder. Order sets each habit&apos;s position in the structure, from the centre outward.</p>
+          <p className="mt-4 text-[13px] text-muted-strong">Drag the handle to change the order.</p>
         </>
       )}
 
       {archived.length > 0 ? (
         <section aria-labelledby="archived" className="mt-16">
           <h2 id="archived" className="label-tech border-b border-line pb-3 text-muted-strong">
-            Archived · {archived.length}
+            Archived ({archived.length})
           </h2>
           <ul>
             {archived.map((h) => (
@@ -174,7 +171,7 @@ export function HabitsView() {
                   label={`Restore ${h.title}`}
                   onClick={() => {
                     restoreHabit(h.id);
-                    toast(`“${h.title}” restored.`);
+                    toast(`Restored: ${h.title}`);
                   }}
                 >
                   <ArchiveRestore className="size-4" strokeWidth={1.5} />
@@ -192,7 +189,7 @@ export function HabitsView() {
         open={pendingDelete !== null}
         onClose={() => setPendingDelete(null)}
         title="Delete permanently?"
-        description={pendingDelete ? `“${pendingDelete.title}” and all of its history will be removed. This can't be undone.` : undefined}
+        description={pendingDelete ? `“${pendingDelete.title}” and its history will be removed for good.` : undefined}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setPendingDelete(null)}>
@@ -202,7 +199,7 @@ export function HabitsView() {
               onClick={() => {
                 if (pendingDelete) {
                   deleteHabit(pendingDelete.id);
-                  toast(`“${pendingDelete.title}” deleted.`);
+                  toast(`Deleted: ${pendingDelete.title}`);
                 }
                 setPendingDelete(null);
               }}

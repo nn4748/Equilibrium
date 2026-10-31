@@ -13,11 +13,11 @@ import { Page, PageHeader } from "@/ui/page";
 import { Label } from "@/ui/typography";
 
 const MOODS: { value: Mood; label: string }[] = [
-  { value: 1, label: "Low" },
-  { value: 2, label: "Flat" },
-  { value: 3, label: "Steady" },
+  { value: 1, label: "Bad" },
+  { value: 2, label: "Meh" },
+  { value: 3, label: "Okay" },
   { value: 4, label: "Good" },
-  { value: 5, label: "Strong" },
+  { value: 5, label: "Great" },
 ];
 
 function MoodPicker({ value, onChange }: { value: Mood | null; onChange: (m: Mood | null) => void }) {
@@ -96,7 +96,7 @@ function Editor({ date }: { date: DateKey }) {
         ) : null}
       </div>
       <div className="flex flex-col gap-3">
-        <Label>Mood</Label>
+        <Label>How do you feel?</Label>
         <MoodPicker
           value={mood}
           onChange={(m) => {
@@ -108,10 +108,10 @@ function Editor({ date }: { date: DateKey }) {
       <div className="flex flex-col gap-3">
         <div className="flex items-baseline justify-between">
           <Label>
-            <label htmlFor="reflection">Reflection</label>
+            <label htmlFor="reflection">Your notes</label>
           </Label>
           <span className="label-tech text-muted-strong" aria-live="polite">
-            {status === "pending" ? "Saving…" : status === "saved" ? "Saved" : `${words} words`}
+            {status === "pending" ? "Saving…" : status === "saved" ? "Saved" : `${words} word${words === 1 ? "" : "s"}`}
           </span>
         </div>
         <Textarea
@@ -122,10 +122,10 @@ function Editor({ date }: { date: DateKey }) {
             setContent(e.target.value);
             queue(e.target.value, mood);
           }}
-          placeholder="What held today? What didn't?"
+          placeholder="How did today go?"
           className="min-h-56 text-[16px] leading-relaxed"
         />
-        <p className="text-[12px] text-muted-strong">Stored only on this device. Included in your exports.</p>
+        <p className="text-[12px] text-muted-strong">Saved on this device only.</p>
       </div>
       <Dialog
         open={confirm}
@@ -206,7 +206,7 @@ function Calendar({ selected, onSelect }: { selected: DateKey; onSelect: (d: Dat
               aria-label={`${formatKey(key, { day: "numeric", month: "long" })}${entry ? ", has entry" : ""}`}
               onClick={() => onSelect(key)}
               className={cn(
-                "relative flex aspect-square flex-col items-center justify-center gap-1 font-mono text-[12px] transition-colors disabled:opacity-25",
+                "relative flex aspect-square flex-col items-center justify-center gap-1 tabular-nums text-[12px] transition-colors disabled:opacity-25",
                 isSel ? "bg-fg text-bg" : entry ? "bg-surface-2 text-fg hover:bg-surface" : "text-muted-strong hover:bg-surface",
                 key === today && !isSel && "outline outline-1 -outline-offset-1 outline-muted",
               )}
@@ -231,16 +231,16 @@ export function JournalView() {
 
   return (
     <Page>
-      <PageHeader index={6} section="Journal" title="Journal" meta={`${entries.length} entr${entries.length === 1 ? "y" : "ies"}`} />
+      <PageHeader title="Journal" subtitle={`${entries.length} entr${entries.length === 1 ? "y" : "ies"}`} />
       <div className="grid gap-12 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-16">
         <div className="order-2 flex flex-col gap-12 lg:order-1">
           <Calendar key={startOfMonth(date)} selected={date} onSelect={setSelected} />
           <section aria-labelledby="entries">
             <h2 id="entries" className="label-tech border-b border-line pb-3 text-muted-strong">
-              Previous entries
+              Past entries
             </h2>
             {entries.length === 0 ? (
-              <p className="py-6 text-[14px] text-muted-strong">No entries yet. Today&apos;s page is open.</p>
+              <p className="py-6 text-[14px] text-muted-strong">No entries yet.</p>
             ) : (
               <ul>
                 {entries.slice(0, limit).map((e) => (
@@ -252,7 +252,7 @@ export function JournalView() {
                       className={cn("flex w-full flex-col gap-1 border-b border-line py-3 text-left transition-colors hover:bg-surface/60", e.date === date && "bg-surface")}
                     >
                       <span className="flex items-center justify-between gap-4 px-1">
-                        <span className="font-mono text-[12px] text-fg">{formatKey(e.date, { weekday: "short", day: "numeric", month: "short" })}</span>
+                        <span className="tabular-nums text-[12px] text-fg">{formatKey(e.date, { weekday: "short", day: "numeric", month: "short" })}</span>
                         {e.mood ? <span className="label-tech text-muted-strong">{MOODS[e.mood - 1]!.label}</span> : null}
                       </span>
                       {e.content ? <span className="line-clamp-2 px-1 text-[13px] text-muted-strong">{e.content}</span> : null}

@@ -86,34 +86,34 @@ function Palette({ onClose }: { onClose: () => void }) {
     const list: Command[] = [];
     for (const e of entries) {
       if (e.status === "completed")
-        list.push({ id: `undo-${e.habit.id}`, group: "Today", label: `Undo “${e.habit.title}”`, icon: Undo2, keywords: "uncheck", run: () => (toggleCompletion(e.habit.id), onClose()) });
+        list.push({ id: `undo-${e.habit.id}`, group: "Today", label: `Undo: ${e.habit.title}`, icon: Undo2, keywords: "uncheck", run: () => (toggleCompletion(e.habit.id), onClose()) });
       else if (e.status === "pending" || e.status === "optional")
         list.push({
           id: `done-${e.habit.id}`,
           group: "Today",
-          label: `Complete “${e.habit.title}”`,
+          label: `Mark done: ${e.habit.title}`,
           icon: Check,
           keywords: "done check",
           run: () => {
             toggleCompletion(e.habit.id);
-            toast(`“${e.habit.title}” completed.`, { action: { label: "Undo", run: () => toggleCompletion(e.habit.id) } });
+            toast(`Done: ${e.habit.title}`, { action: { label: "Undo", run: () => toggleCompletion(e.habit.id) } });
             onClose();
           },
         });
     }
     list.push(
       { id: "new", group: "Actions", label: "New habit", icon: Plus, keywords: "create add", run: () => openEditor(null) },
-      { id: "focus", group: "Actions", label: "Start focus session", icon: Timer, keywords: "pomodoro timer", run: go("/focus") },
-      { id: "theme", group: "Actions", label: "Toggle theme", icon: Moon, keywords: "dark light", run: () => (toggleTheme(), onClose()) },
+      { id: "focus", group: "Actions", label: "Start focus timer", icon: Timer, keywords: "pomodoro timer", run: go("/focus") },
+      { id: "theme", group: "Actions", label: "Switch light / dark", icon: Moon, keywords: "dark light", run: () => (toggleTheme(), onClose()) },
       {
         id: "export",
         group: "Actions",
-        label: "Export data",
+        label: "Save data to a file",
         icon: Download,
         keywords: "backup json download",
         run: () => {
           downloadText(`equilibrium-${useData.getState().today}.json`, useData.getState().exportJSON());
-          toast("Export downloaded.");
+          toast("File saved.");
           onClose();
         },
       },
@@ -179,7 +179,7 @@ function Palette({ onClose }: { onClose: () => void }) {
               setQuery(e.target.value);
               setActive(0);
             }}
-            placeholder="Search habits and commands"
+            placeholder="Type to search"
             aria-label="Search commands"
             role="combobox"
             aria-expanded="true"
@@ -190,7 +190,7 @@ function Palette({ onClose }: { onClose: () => void }) {
           <Kbd>Esc</Kbd>
         </div>
         <ul ref={listRef} id="palette-list" role="listbox" className="flex-1 overflow-y-auto py-2">
-          {results.length === 0 ? <li className="px-4 py-8 text-center text-[14px] text-muted-strong">No matches.</li> : null}
+          {results.length === 0 ? <li className="px-4 py-8 text-center text-[14px] text-muted-strong">Nothing found.</li> : null}
           {results.map((c, i) => {
             const header = c.group !== results[i - 1]?.group ? c.group : null;
             const Icon = c.icon;

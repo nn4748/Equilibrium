@@ -11,7 +11,7 @@ const TIME_LABEL = { anytime: "Any time", morning: "Morning", afternoon: "Aftern
 
 export function WeightMarks({ weight, className }: { weight: number; className?: string }) {
   return (
-    <span className={cn("inline-flex items-end gap-[2px]", className)} aria-label={`Weight ${weight} of 5`}>
+    <span className={cn("inline-flex items-end gap-[2px]", className)} role="img" aria-label={`Importance ${weight} of 5`} title={`Importance ${weight} of 5`}>
       {[1, 2, 3, 4, 5].map((w) => (
         <span key={w} className={cn("w-[3px]", w <= weight ? "bg-current" : "bg-line")} style={{ height: 4 + w * 2 }} />
       ))}
@@ -21,7 +21,7 @@ export function WeightMarks({ weight, className }: { weight: number; className?:
 
 /**
  * One habit on Today. The whole row is the completion toggle (one tap);
- * skip/unskip sits apart so it can't be hit by accident.
+ * skip sits apart so it can't be hit by accident. `index` is used for the 1–9 shortcut hint.
  */
 export function HabitRow({
   entry,
@@ -46,14 +46,14 @@ export function HabitRow({
         onClick={onToggle}
         disabled={skipped}
         aria-pressed={done}
-        aria-label={`${habit.title}${done ? ", completed" : ""}`}
+        aria-label={`${habit.title}${done ? ", done" : ""}`}
+        title={`Shortcut: ${index + 1}`}
         whileTap={{ scale: 0.985 }}
         className={cn(
           "flex min-h-[4.5rem] flex-1 items-center gap-4 py-3 pl-1 pr-2 text-left transition-colors md:gap-5",
           "hover:bg-surface/60 disabled:cursor-default disabled:hover:bg-transparent",
         )}
       >
-        <span className="w-6 shrink-0 font-mono text-[11px] text-muted-strong">{String(index + 1).padStart(2, "0")}</span>
         <span
           className={cn(
             "relative flex size-7 shrink-0 items-center justify-center border transition-colors duration-200",
@@ -71,19 +71,20 @@ export function HabitRow({
           </motion.span>
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-1">
-          <span className={cn("truncate text-[16px] tracking-[-0.01em] transition-colors", done || skipped ? "text-muted-strong" : "text-fg-strong")}>{habit.title}</span>
-          <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-muted-strong">
+          <span className={cn("truncate text-[17px] font-medium transition-colors", done || skipped ? "text-muted-strong line-through decoration-line" : "text-fg-strong")}>{habit.title}</span>
+          <span className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-strong">
             <span>{habit.category}</span>
-            <span aria-hidden className="text-line">/</span>
+            <span aria-hidden>·</span>
             <span>{habit.scheduleType === "weekly" ? describeSchedule(habit) : TIME_LABEL[habit.preferredTime]}</span>
-            {skipped ? <span className="label-tech text-fg">Skipped</span> : null}
-            {habit.scheduleType === "weekly" && entry.counted && !done ? <span className="label-tech text-fg">Due</span> : null}
+            {skipped ? <span className="font-medium text-fg">Skipped today</span> : null}
+            {missed ? <span className="font-medium text-fg">Missed</span> : null}
+            {habit.scheduleType === "weekly" && entry.counted && !done ? <span className="font-medium text-fg">Do it today</span> : null}
           </span>
         </span>
         <WeightMarks weight={entry.weight} className={cn("shrink-0", done ? "text-fg" : "text-muted-strong")} />
       </motion.button>
       <div className="flex items-center pl-1">
-        <IconButton label={skipped ? `Unskip ${habit.title}` : `Skip ${habit.title} today`} size="md" onClick={onSkip} disabled={done} className="md:opacity-0 md:focus-visible:opacity-100 md:group-hover:opacity-100">
+        <IconButton label={skipped ? `Undo skip for ${habit.title}` : `Skip ${habit.title} today`} size="md" onClick={onSkip} disabled={done} className="md:opacity-0 md:focus-visible:opacity-100 md:group-hover:opacity-100">
           {skipped ? <Undo2 className="size-4" strokeWidth={1.5} /> : <SkipForward className="size-4" strokeWidth={1.5} />}
         </IconButton>
       </div>

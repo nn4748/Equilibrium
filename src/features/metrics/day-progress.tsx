@@ -25,7 +25,7 @@ export function DayProgress({ className }: { className?: string }) {
     <div className={cn("flex flex-col gap-3", className)}>
       <div className="flex items-baseline justify-between">
         <Label>Day elapsed</Label>
-        <span className="font-mono text-data font-tabular text-fg">
+        <span className="tabular-nums text-data font-tabular text-fg">
           {clock} <span className="text-muted-strong">· {Math.round(pct * 100)}%</span>
         </span>
       </div>
@@ -41,7 +41,7 @@ export function DayProgress({ className }: { className?: string }) {
         <div className="absolute bottom-0 left-0 h-px bg-fg transition-[width] duration-700" style={{ width: `${pct * 100}%` }} />
         <div className="absolute -top-0.5 h-4 w-px bg-fg-strong transition-[left] duration-700" style={{ left: `${pct * 100}%` }} />
       </div>
-      <div className="flex justify-between font-mono text-[10px] text-muted-strong">
+      <div className="flex justify-between tabular-nums text-[12px] text-muted-strong">
         {[0, 6, 12, 18, 24].map((h) => (
           <span key={h}>{String((h + startHour) % 24).padStart(2, "0")}</span>
         ))}

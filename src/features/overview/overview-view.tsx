@@ -21,7 +21,7 @@ function Stat({ label, value, unit, note }: { label: string; value: string | num
   return (
     <div className="flex flex-col gap-2 bg-bg p-5 md:p-6">
       <Label>{label}</Label>
-      <p className="font-mono text-[2.25rem] leading-none tracking-[-0.04em] text-fg-strong font-tabular">
+      <p className="tabular-nums text-[2.25rem] leading-none tracking-[-0.02em] text-fg-strong font-tabular">
         {value}
         {unit ? <span className="ml-1.5 text-[13px] tracking-normal text-muted-strong">{unit}</span> : null}
       </p>
@@ -41,9 +41,9 @@ export function OverviewView() {
   if (active.length === 0 && !history.start) {
     return (
       <Page>
-        <PageHeader index={1} section="Overview" title="Overview" />
-        <EmptyState title="No habits yet." action={<ButtonLink href="/habits">Set up habits</ButtonLink>}>
-          Once you add habits, your balance score, streaks and history will show here.
+        <PageHeader title="Progress" />
+        <EmptyState title="Nothing to show yet." action={<ButtonLink href="/habits">Add habits</ButtonLink>}>
+          Add a habit and your progress will show up here.
         </EmptyState>
       </Page>
     );
@@ -56,13 +56,11 @@ export function OverviewView() {
   return (
     <Page>
       <PageHeader
-        index={1}
-        section="Overview"
-        title="Overview"
-        meta={history.start ? `Since ${formatKey(history.start, { day: "numeric", month: "short", year: "numeric" })}` : undefined}
+        title="Progress"
+        subtitle={history.start ? `Tracking since ${formatKey(history.start, { day: "numeric", month: "short", year: "numeric" })}` : undefined}
         actions={
           <ButtonLink href="/today" variant="secondary">
-            Open today <ArrowRight className="size-4" strokeWidth={1.5} />
+            Go to Today <ArrowRight className="size-4" strokeWidth={1.5} />
           </ButtonLink>
         }
       />
@@ -73,13 +71,12 @@ export function OverviewView() {
             members={structure.members}
             stress={structure.stress}
             equilibrium={structure.equilibrium}
-            label={`Structure with ${structure.members.length} members, ${Math.round(structure.stress * 100)}% stress.`}
+            label={`Bridge with ${structure.members.length} beams, one for each habit.`}
             className="h-[280px] sm:h-[380px] lg:h-[480px]"
           />
-          <div className="pointer-events-none absolute inset-x-4 top-4 flex justify-between">
-            <Label>Members {String(structure.members.length).padStart(2, "0")}</Label>
-            <Label>Stress {Math.round(structure.stress * 100)}%</Label>
-          </div>
+          <p className="pointer-events-none absolute left-4 top-4 text-[13px] text-muted-strong">
+            {structure.members.length} habits · {structure.equilibrium ? "all done today" : "your bridge"}
+          </p>
         </div>
         <div className="flex flex-col justify-between gap-8 bg-bg p-5 md:p-6">
           <BalanceGauge today={metrics.balanceScore} week={week} month={month} />
@@ -88,33 +85,34 @@ export function OverviewView() {
       </div>
 
       <div className="mt-px grid grid-cols-2 gap-px border-x border-b border-line bg-line md:grid-cols-4">
-        <Stat label="Current streak" value={streaks.current} unit={streaks.current === 1 ? "day" : "days"} note="Consecutive balanced days" />
+        <Stat label="Current streak" value={streaks.current} unit={streaks.current === 1 ? "day" : "days"} note="Days in a row with everything done" />
         <Stat
           label="Longest streak"
           value={streaks.longest}
           unit={streaks.longest === 1 ? "day" : "days"}
-          note={streaks.longestEnd ? `Ended ${formatKey(streaks.longestEnd, { day: "numeric", month: "short" })}` : "No balanced days yet"}
+          note={streaks.longestEnd ? `Ended ${formatKey(streaks.longestEnd, { day: "numeric", month: "short" })}` : "No perfect days yet"}
         />
-        <Stat label="7-day balance" value={week === null ? "—" : Math.round(week)} note="Average score" />
-        <Stat label="30-day balance" value={month === null ? "—" : Math.round(month)} note="Average score" />
+        <Stat label="Last 7 days" value={week === null ? "—" : `${Math.round(week)}%`} note="Average score" />
+        <Stat label="Last 30 days" value={month === null ? "—" : `${Math.round(month)}%`} note="Average score" />
       </div>
 
       <section aria-labelledby="year" className="mt-16">
-        <h2 id="year" className="mb-6 text-heading font-medium text-fg-strong">
-          Year
+        <h2 id="year" className="mb-1 text-heading font-semibold text-fg-strong">
+          Your year
         </h2>
+        <p className="mb-6 text-[14px] text-muted-strong">Each square is a day. Darker means less done; brighter means more.</p>
         <Heatmap history={history} weekStartsOn={weekStartsOn} />
       </section>
 
       <section aria-labelledby="month" className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,420px)_1fr]">
         <div>
-          <h2 id="month" className="mb-6 text-heading font-medium text-fg-strong">
-            Month
+          <h2 id="month" className="mb-6 text-heading font-semibold text-fg-strong">
+            This month
           </h2>
           <MonthCalendar history={history} weekStartsOn={weekStartsOn} />
         </div>
         <div>
-          <h2 className="mb-6 text-heading font-medium text-fg-strong">Habits</h2>
+          <h2 className="mb-6 text-heading font-semibold text-fg-strong">Each habit</h2>
           <HabitRuns />
         </div>
       </section>

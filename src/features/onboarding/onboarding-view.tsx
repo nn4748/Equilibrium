@@ -109,7 +109,7 @@ export function OnboardingView() {
             {[0, 1, 2].map((i) => (
               <span key={i} className={cn("h-px w-8 transition-colors duration-500", i <= step ? "bg-fg" : "bg-line")} />
             ))}
-            <span className="font-mono text-[11px] text-muted-strong">0{step + 1} / 03</span>
+            <span className="text-[13px] text-muted-strong">Step {step + 1} of 3</span>
           </div>
           <button type="button" onClick={() => void finish(false)} className="label-tech h-10 text-muted-strong underline-offset-4 hover:text-fg hover:underline">
             Skip
@@ -132,20 +132,20 @@ export function OnboardingView() {
             {step === 0 ? (
               <div className="grid flex-1 items-center gap-12 lg:grid-cols-2">
                 <div className="flex flex-col gap-8">
-                  <Label>01 — Welcome</Label>
-                  <h1 className="text-display font-medium text-fg-strong">Your life is a structure.</h1>
+                  <Label>Step 1 of 3</Label>
+                  <h1 className="text-display font-semibold text-fg-strong">Welcome to Equilibrium</h1>
                   <p className="max-w-md text-[17px] leading-relaxed text-muted-strong">
-                    Every habit is a member that carries load. Complete it and the member locks into place. Miss it and the structure takes the strain.
+                    A simple way to build good habits. Each habit is a beam in your bridge. Do your habits and the bridge stays strong and level.
                   </p>
                   <dl className="grid grid-cols-3 gap-px border border-line bg-line">
                     {[
-                      ["Member", "One habit"],
-                      ["Load", "Its importance, 1–5"],
-                      ["Balance", "Weighted completion"],
+                      ["1", "Pick a few habits"],
+                      ["2", "Check them off each day"],
+                      ["3", "Watch your progress"],
                     ].map(([t, d]) => (
                       <div key={t} className="flex flex-col gap-1.5 bg-bg p-4">
-                        <dt className="label-tech text-fg">{t}</dt>
-                        <dd className="text-[13px] text-muted-strong">{d}</dd>
+                        <dt className="text-[22px] font-semibold text-fg-strong tabular-nums">{t}</dt>
+                        <dd className="text-[14px] text-fg">{d}</dd>
                       </div>
                     ))}
                   </dl>
@@ -157,9 +157,9 @@ export function OnboardingView() {
             {step === 1 ? (
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-4">
-                  <Label>02 — Members</Label>
-                  <h1 className="text-title font-medium text-fg-strong">Choose your first habits.</h1>
-                  <p className="max-w-lg text-muted-strong">Start with three to five. You can change everything later.</p>
+                  <Label>Step 2 of 3</Label>
+                  <h1 className="text-title font-semibold text-fg-strong">Pick your habits</h1>
+                  <p className="max-w-lg text-muted-strong">Choose 2 to 5 to start. You can change them later.</p>
                 </div>
                 <ul className="grid gap-px border border-line bg-line sm:grid-cols-2">
                   {SUGGESTIONS.map((s) => {
@@ -192,7 +192,7 @@ export function OnboardingView() {
                     addCustom();
                   }}
                 >
-                  <Input value={custom} onChange={(e) => setCustom(e.target.value)} maxLength={60} placeholder="Add your own" aria-label="Custom habit name" />
+                  <Input value={custom} onChange={(e) => setCustom(e.target.value)} maxLength={60} placeholder="Or type your own" aria-label="Custom habit name" />
                   <Button type="submit" variant="secondary" disabled={!custom.trim()}>
                     <Plus className="size-4" strokeWidth={1.5} /> Add
                   </Button>
@@ -216,12 +216,12 @@ export function OnboardingView() {
             {step === 2 ? (
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col gap-4">
-                  <Label>03 — Load</Label>
-                  <h1 className="text-title font-medium text-fg-strong">Set importance and schedule.</h1>
-                  <p className="max-w-lg text-muted-strong">Heavier habits count for more of your daily balance. Weekly habits can be done on any day.</p>
+                  <Label>Step 3 of 3</Label>
+                  <h1 className="text-title font-semibold text-fg-strong">How important is each one?</h1>
+                  <p className="max-w-lg text-muted-strong">More important habits count more toward your daily score. You can also choose how often.</p>
                 </div>
                 {drafts.length === 0 ? (
-                  <p className="text-muted-strong">No habits selected. Go back to choose some, or finish and add them later.</p>
+                  <p className="text-muted-strong">No habits picked. Go back, or finish and add them later.</p>
                 ) : (
                   <ul className="border-t border-line">
                     {drafts.map((d) => (
@@ -254,16 +254,16 @@ export function OnboardingView() {
                 router.replace("/today");
               }}
             >
-              Explore sample data
+              Try with sample data
             </Button>
           )}
           {step < 2 ? (
             <Button onClick={() => go(step + 1)} disabled={step === 1 && drafts.length === 0}>
-              {step === 0 ? "Begin" : `Continue${drafts.length ? ` · ${drafts.length}` : ""}`} <ArrowRight className="size-4" strokeWidth={1.5} />
+              {step === 0 ? "Get started" : `Next${drafts.length ? ` (${drafts.length})` : ""}`} <ArrowRight className="size-4" strokeWidth={1.5} />
             </Button>
           ) : (
             <Button onClick={() => void finish(true)} disabled={status !== "ready"}>
-              Build structure <ArrowRight className="size-4" strokeWidth={1.5} />
+              Start <ArrowRight className="size-4" strokeWidth={1.5} />
             </Button>
           )}
         </div>

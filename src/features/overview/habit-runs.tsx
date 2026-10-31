@@ -23,9 +23,9 @@ export function HabitRuns() {
     <div className="flex flex-col">
       <div className="grid grid-cols-[minmax(0,1fr)_minmax(80px,180px)_48px_48px] gap-4 border-b border-line pb-3">
         <Label>Habit</Label>
-        <Label>30 days</Label>
-        <Label className="text-right">Rate</Label>
-        <Label className="text-right">Run</Label>
+        <Label>Last 30 days</Label>
+        <Label className="text-right">Done</Label>
+        <Label className="text-right">Streak</Label>
       </div>
       <ul>
         {rows.map(({ habit, perf, run }) => (
@@ -34,8 +34,8 @@ export function HabitRuns() {
             <span className="relative h-2 border border-line" aria-hidden>
               <span className="absolute inset-y-0 left-0 bg-fg" style={{ width: `${(perf?.rate ?? 0) * 100}%` }} />
             </span>
-            <span className="text-right font-mono text-[13px] font-tabular text-fg">{perf ? `${Math.round(perf.rate * 100)}%` : "—"}</span>
-            <span className="text-right font-mono text-[13px] font-tabular text-muted-strong">{run}</span>
+            <span className="text-right tabular-nums text-[13px] font-tabular text-fg">{perf ? `${Math.round(perf.rate * 100)}%` : "—"}</span>
+            <span className="text-right tabular-nums text-[13px] font-tabular text-muted-strong">{run}</span>
           </li>
         ))}
       </ul>

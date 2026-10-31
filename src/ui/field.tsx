@@ -32,7 +32,7 @@ export function Field({ label, hint, error, meta, className, children }: FieldPr
       </div>
       {children({ id, "aria-describedby": describedBy, "aria-invalid": error ? true : undefined })}
       {error ? (
-        <p id={`${id}-error`} role="alert" className="font-mono text-[12px] text-fg">
+        <p id={`${id}-error`} role="alert" className="tabular-nums text-[12px] text-fg">
           <span aria-hidden>! </span>
           {error}
         </p>

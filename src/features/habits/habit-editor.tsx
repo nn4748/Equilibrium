@@ -37,10 +37,10 @@ function EditorBody({ habitId, initial, onDone }: { habitId: string | null; init
     if (Object.keys(found).length) return;
     if (habitId) {
       updateHabit(habitId, value);
-      toast("Habit updated.");
+      toast("Saved.");
     } else {
       createHabit(value);
-      toast(`“${value.title.trim()}” added.`);
+      toast(`Added: ${value.title.trim()}`);
     }
     onDone();
   };
@@ -48,7 +48,7 @@ function EditorBody({ habitId, initial, onDone }: { habitId: string | null; init
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-10">
       <HabitForm value={value} onChange={setValue} errors={errors} weekStartsOn={weekStartsOn} />
-      {habitId ? <p className="text-[13px] text-muted-strong">Schedule and weight changes apply from today. Past days keep their original schedule.</p> : null}
+      {habitId ? <p className="text-[13px] text-muted-strong">Changes start from today. Past days stay as they were.</p> : null}
       <div className="safe-bottom sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-3 border-t border-line bg-bg-raised px-6 py-4">
         <Button variant="ghost" onClick={onDone}>
           Cancel

@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     id: "/",
     name: "Equilibrium",
     short_name: "Equilibrium",
-    description: "Discipline is the architecture of a balanced life. Habits, focus and reflection — stored on your device.",
+    description: "A simple, private habit tracker with a focus timer and journal.",
     start_url: "/today",
     scope: "/",
     display: "standalone",

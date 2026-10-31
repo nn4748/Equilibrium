@@ -65,11 +65,11 @@ function StatusBanners() {
       {mode === "sample" ? (
         <div className="flex items-center justify-between gap-4 border-b border-line bg-fg px-4 py-2 text-bg md:px-8 lg:px-12">
           <p className="text-[13px]">
-            <span className="label-tech mr-3">Sample data</span>
-            <span className="hidden sm:inline">You&apos;re exploring generated example data. Your own records are untouched.</span>
+            <span className="mr-2 font-semibold">Sample data</span>
+            <span className="hidden sm:inline">This is made-up data to try the app. Your own data is safe.</span>
           </p>
-          <button type="button" onClick={() => void setMode("live")} className="label-tech h-8 shrink-0 underline underline-offset-4">
-            Exit sample
+          <button type="button" onClick={() => void setMode("live")} className="h-8 shrink-0 text-[13px] font-medium underline underline-offset-4">
+            Back to my data
           </button>
         </div>
       ) : null}
@@ -116,11 +116,11 @@ function DataError({ message }: { message: string | null }) {
   const init = useData((s) => s.init);
   return (
     <div className="mx-auto flex max-w-lg flex-col gap-5 px-4 py-24">
-      <Label>Storage error</Label>
-      <h1 className="text-title font-medium text-fg-strong">Your data couldn&apos;t be loaded.</h1>
+      <Label>Something went wrong</Label>
+      <h1 className="text-title font-medium text-fg-strong">We couldn&apos;t load your data.</h1>
       <p className="text-muted-strong">{message}</p>
       <p className="text-[14px] text-muted-strong">
-        Resetting starts fresh. The unreadable data is set aside in browser storage, not deleted.
+        Starting fresh keeps a copy of the old data aside. Nothing is deleted.
       </p>
       <div className="flex gap-3">
         <Button onClick={() => void init()}>Try again</Button>
@@ -131,7 +131,7 @@ function DataError({ message }: { message: string | null }) {
             await init();
           }}
         >
-          Reset data
+          Start fresh
         </Button>
       </div>
     </div>

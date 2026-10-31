@@ -8,7 +8,7 @@ const toneClass: Record<Tone, string> = {
   fg: "text-fg",
 };
 
-/** Small uppercase technical label (JetBrains Mono). */
+/** Small secondary label. */
 export function Label({
   as: Tag = "span",
   tone = "muted",
@@ -18,9 +18,9 @@ export function Label({
   return <Tag className={cn("label-tech", toneClass[tone], className)} {...props} />;
 }
 
-/** Monospaced numeric readout — coordinates, measurements, values. */
+/** Numeric readout with tabular figures. */
 export function Data({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cn("font-mono text-data font-tabular", className)} {...props} />;
+  return <span className={cn("tabular-nums text-data font-tabular", className)} {...props} />;
 }
 
 /** "02 — TODAY" style section index. */
@@ -99,7 +99,7 @@ export function CornerMarks({ className }: { className?: string }) {
 export function Kbd({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   return (
     <kbd
-      className={cn("inline-flex h-5 min-w-5 items-center justify-center border border-line px-1 font-mono text-[10px] text-muted-strong", className)}
+      className={cn("inline-flex h-5 min-w-5 items-center justify-center border border-line px-1 tabular-nums text-[12px] text-muted-strong", className)}
       {...props}
     />
   );

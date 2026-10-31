@@ -53,7 +53,7 @@ export function Specimen() {
 
   return (
     <Page>
-      <PageHeader index={0} section="System" title="Design system"  />
+      <PageHeader title="Design system"  />
 
       <Section index={1} title="Typography">
         <div className="flex flex-col gap-10">
@@ -97,15 +97,15 @@ export function Specimen() {
             <li key={token} className="flex flex-col border-b border-r border-line">
               <span className="h-16 border-b border-line" style={{ background: `var(--${token})` }} />
               <span className="flex flex-col gap-1 p-3">
-                <span className="font-mono text-[12px] text-fg">--{token}</span>
-                <Data className="text-[11px] text-muted-strong">{tokens[token] ?? "—"}</Data>
+                <span className="tabular-nums text-[12px] text-fg">--{token}</span>
+                <Data className="text-[12px] text-muted-strong">{tokens[token] ?? "—"}</Data>
               </span>
             </li>
           ))}
         </ul>
         <p className="mt-4 text-[13px] text-muted-strong">
-          No hue anywhere. <span className="font-mono">muted</span> is reserved for large text and disabled states;{" "}
-          <span className="font-mono">muted-strong</span> carries small labels on raised surfaces at ≥ 4.5:1.
+          No hue anywhere. <span className="tabular-nums">muted</span> is reserved for large text and disabled states;{" "}
+          <span className="tabular-nums">muted-strong</span> carries small labels on raised surfaces at ≥ 4.5:1.
         </p>
       </Section>
 
@@ -131,7 +131,7 @@ export function Specimen() {
             {[4, 8, 12, 16, 24, 32, 48, 64].map((s) => (
               <div key={s} className="flex flex-col items-start gap-2">
                 <span className="block bg-fg" style={{ width: s, height: s }} />
-                <Data className="text-[11px] text-muted-strong">{s}</Data>
+                <Data className="text-[12px] text-muted-strong">{s}</Data>
               </div>
             ))}
           </div>

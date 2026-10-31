@@ -144,10 +144,10 @@ function list<T>(v: unknown, path: string, parse: (x: unknown, p: string) => T):
  * snapshot. Throws ValidationError with a readable path on the first problem.
  */
 export function parseEnvelope(raw: unknown): Snapshot {
-  if (!isObj(raw) || raw.app !== "equilibrium") throw new ValidationError("This isn't an Equilibrium export.");
+  if (!isObj(raw) || raw.app !== "equilibrium") throw new ValidationError("This isn't an Equilibrium file.");
   const ver = raw.schemaVersion;
   if (!isInt(ver, 1, 1000)) throw new ValidationError("Missing schema version.");
-  if (ver > SCHEMA_VERSION) throw new ValidationError("This file was made by a newer version of Equilibrium.");
+  if (ver > SCHEMA_VERSION) throw new ValidationError("This file is from a newer version of Equilibrium.");
   const data = migrate(raw.data, ver);
   if (!isObj(data)) throw new ValidationError("data: expected an object");
 

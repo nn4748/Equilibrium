@@ -70,7 +70,7 @@ export function BottomNav({ className }: { className?: string }) {
                     />
                   ) : null}
                   <Icon className="size-[18px]" strokeWidth={isActive ? 1.75 : 1.25} aria-hidden />
-                  <span className="font-mono text-[10px] uppercase tracking-[0.06em]">{item.label}</span>
+                  <span className="text-[12px] font-medium">{item.label}</span>
                 </Link>
               </li>
             );
@@ -88,7 +88,7 @@ export function BottomNav({ className }: { className?: string }) {
             >
               {secondaryActive ? <span aria-hidden className="absolute inset-x-5 top-0 h-px bg-fg-strong" /> : null}
               <Ellipsis className="size-[18px]" strokeWidth={1.25} aria-hidden />
-              <span className="font-mono text-[10px] uppercase tracking-[0.06em]">More</span>
+              <span className="text-[12px] font-medium">More</span>
             </button>
           </li>
         </ul>
@@ -107,7 +107,6 @@ export function BottomNav({ className }: { className?: string }) {
                   aria-current={isActive ? "page" : undefined}
                   className="flex min-h-16 items-center gap-4 px-6 py-3 transition-colors active:bg-surface"
                 >
-                  <span className="font-mono text-[11px] text-muted-strong">{String(item.index).padStart(2, "0")}</span>
                   <span className="flex flex-1 flex-col">
                     <span className={cn("text-[16px]", isActive ? "text-fg-strong" : "text-fg")}>{item.label}</span>
                     <span className="text-[13px] text-muted-strong">{item.hint}</span>

@@ -76,7 +76,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
               aria-label={`${formatKey(key, { day: "numeric", month: "long" })}: ${describeDay(m)}`}
               aria-pressed={key === selected}
               className={cn(
-                "relative flex aspect-square items-start justify-start p-1.5 font-mono text-[11px] transition-[outline-color]",
+                "relative flex aspect-square items-start justify-start p-1.5 tabular-nums text-[12px] transition-[outline-color]",
                 lvl !== null && lvl >= 3 ? "text-bg" : lvl !== null && lvl >= 1 ? "text-fg" : "text-muted-strong",
                 future && "opacity-30",
                 key === shown ? "outline outline-1 outline-offset-1 outline-fg" : "",
@@ -89,13 +89,13 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
           );
         })}
       </div>
-      <p className="font-mono text-[12px] text-fg">
+      <p className="tabular-nums text-[12px] text-fg">
         {formatKey(shown, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(history.days.get(shown))}</span>
       </p>
       <dl className="grid grid-cols-3 border-t border-line pt-4">
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Average</Label>
+            <Label>Average score</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.avg === null ? "—" : Math.round(stats.avg)}</Data>
@@ -103,7 +103,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
         </div>
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Balanced</Label>
+            <Label>Perfect days</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.perfect}</Data>
@@ -111,7 +111,7 @@ export function MonthCalendar({ history, weekStartsOn }: { history: History; wee
         </div>
         <div className="flex flex-col gap-1">
           <dt>
-            <Label>Completions</Label>
+            <Label>Habits done</Label>
           </dt>
           <dd>
             <Data className="text-[18px] text-fg-strong">{stats.completions}</Data>

@@ -11,7 +11,7 @@ import { Kbd } from "@/ui/typography";
 import { NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
 
-/** Sidebar for tablet and desktop. Collapses to a rail of section numbers. */
+/** Sidebar for tablet and desktop. Collapses to a rail of icons. */
 export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const active = navFor(pathname)?.href;
@@ -55,7 +55,7 @@ export function Sidebar({ className }: { className?: string }) {
         <ul className="flex flex-col">
           {NAV.map((item) => {
             const isActive = item.href === active;
-            const n = String(item.index).padStart(2, "0");
+            const Icon = item.icon;
             return (
               <li key={item.href}>
                 <Link
@@ -77,10 +77,10 @@ export function Sidebar({ className }: { className?: string }) {
                       transition={{ type: "spring", stiffness: 500, damping: 40 }}
                     />
                   ) : null}
-                  <span className="font-mono text-[11px] font-tabular">{n}</span>
+                  <Icon className="size-[18px] shrink-0" strokeWidth={isActive ? 1.9 : 1.6} aria-hidden />
                   {!collapsed ? (
                     <>
-                      <span className="text-[14px] tracking-[-0.01em]">{item.label}</span>
+                      <span className="text-[15px] font-medium">{item.label}</span>
                       <span
                         aria-hidden
                         className={cn(

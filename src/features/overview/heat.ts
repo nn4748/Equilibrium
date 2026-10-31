@@ -14,6 +14,6 @@ export function heatLevel(m: DailyMetrics | undefined): number | null {
 export const HEAT_LABELS = ["0", "1–39", "40–69", "70–99", "100"] as const;
 
 export function describeDay(m: DailyMetrics | undefined): string {
-  if (!m || m.balanceScore === null) return "Nothing scheduled";
-  return `Balance ${Math.round(m.balanceScore)} · ${m.completedCount}/${m.scheduledCount} done`;
+  if (!m || m.balanceScore === null) return "Nothing planned";
+  return `${m.completedCount} of ${m.scheduledCount} done · ${Math.round(m.balanceScore)}%`;
 }

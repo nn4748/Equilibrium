@@ -1,25 +1,19 @@
 import type { Metadata, Viewport } from "next";
-import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Manrope } from "next/font/google";
 import { themeBootScript } from "@/state/theme";
 import { ServiceWorker } from "@/features/shell/service-worker";
 import { ThemeSync } from "@/features/shell/theme-sync";
 import "./globals.css";
 
-const display = Inter_Tight({
+const sans = Manrope({
   subsets: ["latin"],
-  variable: "--font-inter-tight",
-  display: "swap",
-});
-
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+  variable: "--font-app",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: { default: "Equilibrium", template: "%s — Equilibrium" },
-  description: "Discipline is the architecture of a balanced life. A structural system for habits, focus and reflection.",
+  description: "A simple, private habit tracker with a focus timer and journal.",
   applicationName: "Equilibrium",
   authors: [{ name: "Nourah Aleissa" }],
   creator: "Nourah Aleissa",
@@ -40,7 +34,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="dark" className={`${display.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" data-theme="dark" className={sans.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
       </head>

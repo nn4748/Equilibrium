@@ -301,7 +301,7 @@ export const useData = create<DataState>((set, get) => {
       try {
         parsed = parseEnvelope(JSON.parse(text));
       } catch (error) {
-        if (error instanceof SyntaxError) return { ok: false, error: "The file isn't valid JSON." };
+        if (error instanceof SyntaxError) return { ok: false, error: "This file can't be read." };
         if (error instanceof ValidationError) return { ok: false, error: error.message };
         return { ok: false, error: "The file couldn't be read." };
       }

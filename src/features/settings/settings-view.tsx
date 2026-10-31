@@ -86,7 +86,7 @@ export function SettingsView() {
     setImportError(null);
     if (!file) return;
     if (file.size > 10 * 1024 * 1024) {
-      setImportError("That file is larger than 10 MB, which is more than any Equilibrium export.");
+      setImportError("That file is too big to be an Equilibrium file.");
       return;
     }
     setPendingImport({ name: file.name, text: await file.text() });
@@ -97,17 +97,17 @@ export function SettingsView() {
     if (!pendingImport) return;
     const result = await importJSON(pendingImport.text);
     setPendingImport(null);
-    if (result.ok) toast(`Imported ${result.habits} habits and ${result.logs} log entries. Previous data was backed up.`);
+    if (result.ok) toast(`Loaded ${result.habits} habits. Your old data was backed up.`);
     else setImportError(result.error);
   };
 
   return (
     <Page>
-      <PageHeader index={7} section="Settings" title="Settings" />
+      <PageHeader title="Settings" />
 
       <div className="max-w-4xl">
         <Group id="app" title="App">
-          <Row title="Add to home screen" description="Install Equilibrium to open it full screen, like an app. Works offline — your data stays on this device.">
+          <Row title="Add to home screen" description="Open Equilibrium like a normal app, full screen. It works offline too.">
             <InstallApp />
           </Row>
         </Group>
@@ -116,7 +116,7 @@ export function SettingsView() {
           <Row title="Theme" description="System follows your device setting.">
             <Segmented label="Theme" options={THEMES} value={preference} onChange={setPreference} />
           </Row>
-          <Row title="Reduce motion" description="Turns off parallax, camera movement and transitions. System follows your device setting.">
+          <Row title="Reduce motion" description="Fewer animations. System follows your phone or computer setting.">
             <Segmented
               label="Reduce motion"
               value={p.reducedMotion}
@@ -128,7 +128,7 @@ export function SettingsView() {
               ]}
             />
           </Row>
-          <Row title="3D quality" description="Auto lowers quality on slower devices. Low turns off shadows and post-processing.">
+          <Row title="3D quality" description="Auto picks what works best on your device. Low saves battery.">
             <Segmented
               label="3D quality"
               value={p.quality}
@@ -154,7 +154,7 @@ export function SettingsView() {
               ]}
             />
           </Row>
-          <Row title="Day starts at" htmlFor="day-start" description="For late nights: anything before this hour counts toward the previous day.">
+          <Row title="Day starts at" htmlFor="day-start" description="Up late? Anything before this time counts as the day before.">
             <Select id="day-start" value={p.dayStartsAtHour} onChange={(e) => updateSettings({ preferences: { dayStartsAtHour: Number(e.target.value) } })} className="w-36">
               {[0, 1, 2, 3, 4, 5, 6].map((h) => (
                 <option key={h} value={h}>
@@ -168,7 +168,7 @@ export function SettingsView() {
         <Group id="focus" title="Focus">
           {(
             [
-              ["Focus length", "work", [15, 20, 25, 30, 45, 50, 60, 90]],
+              ["Focus time", "work", [15, 20, 25, 30, 45, 50, 60, 90]],
               ["Short break", "short", [3, 5, 10, 15]],
               ["Long break", "long", [10, 15, 20, 30]],
             ] as const
@@ -183,60 +183,60 @@ export function SettingsView() {
               </Select>
             </Row>
           ))}
-          <Row title="Start next phase automatically">
-            <Switch checked={f.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label="Start next phase automatically" />
+          <Row title="Start the next round automatically">
+            <Switch checked={f.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label="Start the next round automatically" />
           </Row>
         </Group>
 
         <Group id="data" title="Data">
-          <Row title="Export" description="Download everything — habits, history, journal and focus sessions — as a JSON file.">
+          <Row title="Save a copy" description="Save all your data to a file, so you can keep a copy.">
             <Button
               variant="secondary"
               onClick={() => {
                 downloadText(`equilibrium-${today}.json`, exportJSON());
-                toast("Export downloaded.");
+                toast("File saved.");
               }}
             >
-              <Download className="size-4" strokeWidth={1.5} /> Export JSON
+              <Download className="size-4" strokeWidth={1.5} /> Save file
             </Button>
           </Row>
-          <Row title="Import" description="Replace current data with an Equilibrium export. The file is checked first, and your current data is backed up.">
+          <Row title="Load a copy" description="Load a file you saved before. Your current data is backed up first.">
             <div className="flex flex-col items-start gap-2 md:items-end">
               <input ref={fileRef} type="file" accept="application/json,.json" className="sr-only" id="import-file" onChange={(e) => void onFile(e.target.files?.[0])} />
               <Button variant="secondary" onClick={() => fileRef.current?.click()}>
-                <Upload className="size-4" strokeWidth={1.5} /> Import JSON
+                <Upload className="size-4" strokeWidth={1.5} /> Load file
               </Button>
               {importError ? (
-                <p role="alert" className="max-w-xs font-mono text-[12px] text-fg md:text-right">
+                <p role="alert" className="max-w-xs tabular-nums text-[12px] text-fg md:text-right">
                   ! {importError}
                 </p>
               ) : null}
             </div>
           </Row>
-          <Row title="Restore backup" description="Return to the data saved automatically before the last import or reset.">
+          <Row title="Undo last load or reset" description="Go back to your data from before the last load or reset.">
             <Button variant="secondary" onClick={() => setConfirmRestore(true)}>
-              <RotateCcw className="size-4" strokeWidth={1.5} /> Restore
+              <RotateCcw className="size-4" strokeWidth={1.5} /> Undo
             </Button>
           </Row>
           <Row
             title="Sample data"
-            description={mode === "sample" ? "You're viewing generated sample data. Your own data is kept separately." : "Explore Equilibrium with 150 days of generated data. Kept separate from your own records."}
+            description={mode === "sample" ? "You're looking at made-up data. Your own data is safe." : "Try the app with 150 days of made-up data. Your own data stays safe."}
           >
             <Button variant="secondary" onClick={() => void setMode(mode === "sample" ? "live" : "sample")}>
-              <FlaskConical className="size-4" strokeWidth={1.5} /> {mode === "sample" ? "Exit sample data" : "Explore sample data"}
+              <FlaskConical className="size-4" strokeWidth={1.5} /> {mode === "sample" ? "Back to my data" : "Try sample data"}
             </Button>
           </Row>
-          <Row title="Clear all data" description={`Permanently remove ${mode === "sample" ? "the sample data" : "all habits, history, journal entries and focus sessions"} from this device. A backup is kept until the next import or reset.`}>
+          <Row title="Delete all data" description={`Remove ${mode === "sample" ? "the sample data" : "all your habits, history, notes and focus sessions"} from this device.`}>
             <Button variant="secondary" onClick={() => setConfirmClear(true)} disabled={habits === 0 && mode === "live"}>
-              <Trash2 className="size-4" strokeWidth={1.5} /> Clear data
+              <Trash2 className="size-4" strokeWidth={1.5} /> Delete all
             </Button>
           </Row>
-          <p className="mt-4 font-mono text-[12px] text-muted-strong">Stored locally in this browser · {storageUsed()}</p>
+          <p className="mt-4 tabular-nums text-[12px] text-muted-strong">Saved on this device · {storageUsed()} used</p>
         </Group>
 
         <Group id="about" title="About">
           <p className="py-5 text-[14px] text-muted-strong">
-            Equilibrium — made by <span className="text-fg">Nourah Aleissa</span>.
+            Equilibrium, made by <span className="text-fg">Nourah Aleissa</span>.
           </p>
         </Group>
       </div>
@@ -244,22 +244,22 @@ export function SettingsView() {
       <Dialog
         open={pendingImport !== null}
         onClose={() => setPendingImport(null)}
-        title="Replace current data?"
-        description={pendingImport ? `“${pendingImport.name}” will replace what's on this device. Your current data is backed up first.` : undefined}
+        title="Replace your data?"
+        description={pendingImport ? `“${pendingImport.name}” will replace your current data. We'll back it up first.` : undefined}
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setPendingImport(null)}>
               Cancel
             </Button>
-            <Button onClick={() => void runImport()}>Import</Button>
+            <Button onClick={() => void runImport()}>Replace</Button>
           </>
         }
       />
       <Dialog
         open={confirmRestore}
         onClose={() => setConfirmRestore(false)}
-        title="Restore backup?"
-        description="Current data will be replaced by the last automatic backup."
+        title="Undo last load or reset?"
+        description="Your data will go back to how it was before."
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setConfirmRestore(false)}>
@@ -268,10 +268,10 @@ export function SettingsView() {
             <Button
               onClick={async () => {
                 setConfirmRestore(false);
-                toast((await restoreBackup()) ? "Backup restored." : "There's no backup on this device yet.");
+                toast((await restoreBackup()) ? "Done. Your data is back." : "There's nothing to undo yet.");
               }}
             >
-              Restore
+              Undo
             </Button>
           </>
         }
@@ -279,8 +279,8 @@ export function SettingsView() {
       <Dialog
         open={confirmClear}
         onClose={() => setConfirmClear(false)}
-        title="Clear all data?"
-        description="Everything on this device will be removed. Export first if you want a copy you can keep."
+        title="Delete all data?"
+        description="This removes everything from this device. Save a copy first if you want to keep it."
         footer={
           <>
             <Button variant="ghost" data-autofocus onClick={() => setConfirmClear(false)}>
@@ -290,10 +290,10 @@ export function SettingsView() {
               onClick={async () => {
                 setConfirmClear(false);
                 await clearAll();
-                toast("All data cleared.");
+                toast("All data deleted.");
               }}
             >
-              Clear everything
+              Delete all
             </Button>
           </>
         }

@@ -29,7 +29,7 @@ const AXIS_W = 30;
 /** Readout line above every chart: shows the inspected datum, or the default. */
 function Readout({ text }: { text: React.ReactNode }) {
   return (
-    <p aria-live="polite" className="min-h-5 truncate font-mono text-[12px] text-fg">
+    <p aria-live="polite" className="min-h-5 truncate tabular-nums text-[12px] text-fg">
       {text}
     </p>
   );
@@ -54,7 +54,7 @@ function YAxis({ height, max, ticks, plotW, format }: { height: number; max: num
         return (
           <g key={t}>
             <line x1={AXIS_W} x2={AXIS_W + plotW} y1={y} y2={y} stroke="var(--line)" strokeDasharray={t === 0 ? undefined : "2 3"} />
-            <text x={AXIS_W - 6} y={y} textAnchor="end" dominantBaseline="middle" className="fill-muted-strong font-mono" fontSize={9}>
+            <text x={AXIS_W - 6} y={y} textAnchor="end" dominantBaseline="middle" className="fill-muted-strong tabular-nums" fontSize={11}>
               {format(t)}
             </text>
           </g>
@@ -120,7 +120,7 @@ export function BarChart({
                   <rect x={cx - barW / 2} y={height - h} width={barW} height={h} fill={active ? "var(--fg-strong)" : "var(--fg)"} opacity={index === null || active ? 1 : 0.45} />
                 )}
                 {i % labelEvery === 0 || active ? (
-                  <text x={cx} y={height + 14} textAnchor="middle" className={cn("font-mono", active ? "fill-fg" : "fill-muted-strong")} fontSize={9}>
+                  <text x={cx} y={height + 14} textAnchor="middle" className={cn("tabular-nums", active ? "fill-fg" : "fill-muted-strong")} fontSize={11}>
                     {d.label}
                   </text>
                 ) : null}
@@ -169,7 +169,7 @@ export function LineChart({ data, height = 200, label, fallback }: { data: Datum
     <div ref={ref} className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-4">
         <Readout text={shown ? `${shown.label} — ${shown.detail}` : <span className="text-muted-strong">{fallback}</span>} />
-        <div className="hidden shrink-0 items-center gap-4 font-mono text-[11px] text-muted-strong sm:flex" aria-hidden>
+        <div className="hidden shrink-0 items-center gap-4 tabular-nums text-[12px] text-muted-strong sm:flex" aria-hidden>
           <span className="flex items-center gap-1.5">
             <span className="h-px w-4 bg-muted" /> Daily
           </span>
@@ -202,7 +202,7 @@ export function LineChart({ data, height = 200, label, fallback }: { data: Datum
           ) : null}
           {[0, Math.floor((data.length - 1) / 2), data.length - 1].map((i) =>
             data[i] ? (
-              <text key={i} x={x(i)} y={height + 14} textAnchor={i === 0 ? "start" : i === data.length - 1 ? "end" : "middle"} className="fill-muted-strong font-mono" fontSize={9}>
+              <text key={i} x={x(i)} y={height + 14} textAnchor={i === 0 ? "start" : i === data.length - 1 ? "end" : "middle"} className="fill-muted-strong tabular-nums" fontSize={11}>
                 {data[i]!.label}
               </text>
             ) : null,
@@ -222,7 +222,7 @@ export function RankBars({ rows }: { rows: { id: string; label: string; rate: nu
       {rows.map((r) => (
         <li key={r.id} className="grid grid-cols-[minmax(0,1fr)_44px] items-center gap-x-4 gap-y-2 border-b border-line py-3">
           <span className="truncate text-[14px] text-fg">{r.label}</span>
-          <span className="text-right font-mono text-[13px] font-tabular text-fg-strong">{Math.round(r.rate * 100)}%</span>
+          <span className="text-right tabular-nums text-[13px] font-tabular text-fg-strong">{Math.round(r.rate * 100)}%</span>
           <span className="relative col-span-2 h-1.5 bg-surface-2" aria-hidden>
             <span className="absolute inset-y-0 left-0 bg-fg" style={{ width: `${r.rate * 100}%` }} />
           </span>

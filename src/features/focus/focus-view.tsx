@@ -32,7 +32,7 @@ function Stepper({ label, value, min, max, onChange, unit = "min" }: { label: st
         <IconButton label={`Decrease ${label}`} size="sm" disabled={value <= min} onClick={() => onChange(value - 1)}>
           <span aria-hidden>−</span>
         </IconButton>
-        <span className="w-16 text-center font-mono text-[14px] font-tabular text-fg-strong">
+        <span className="w-16 text-center tabular-nums text-[14px] font-tabular text-fg-strong">
           {value} <span className="text-muted-strong">{unit}</span>
         </span>
         <IconButton label={`Increase ${label}`} size="sm" disabled={value >= max} onClick={() => onChange(value + 1)}>
@@ -104,7 +104,7 @@ export function FocusView() {
       const run = finished && f.autoStart;
       t.set({ phase: next, cycle, duration: ms, remaining: ms, status: run ? "running" : "idle", endsAt: run ? Date.now() + ms : null });
       if (finished) {
-        toast(t.phase === "work" ? "Focus session complete. Take a break." : "Break over. Ready when you are.");
+        toast(t.phase === "work" ? "Nice focus. Time for a break." : "Break is over. Ready when you are.");
         navigator.vibrate?.([12, 60, 12]);
       }
     },
@@ -181,7 +181,7 @@ export function FocusView() {
       </div>
 
       <header className="relative z-10 flex items-center justify-between px-4 py-4 md:px-8">
-        <Label>05 — Focus</Label>
+        <Label>Focus</Label>
         <div className="flex items-center gap-1">
           <IconButton label="Timer settings" onClick={() => setSettingsOpen(true)}>
             <Settings2 className="size-4" strokeWidth={1.5} />
@@ -201,7 +201,7 @@ export function FocusView() {
             </motion.p>
           </AnimatePresence>
           <p
-            className="font-mono text-[clamp(5rem,22vw,13rem)] font-extralight leading-none tracking-[-0.07em] text-fg-strong font-tabular"
+            className="tabular-nums text-[clamp(5rem,22vw,13rem)] font-extralight leading-none tracking-[-0.02em] text-fg-strong font-tabular"
             role="timer"
             aria-live="off"
             aria-label={`${formatClock(left)} remaining`}
@@ -245,18 +245,18 @@ export function FocusView() {
       <footer className="relative z-10 grid grid-cols-3 border-t border-line bg-bg/70 backdrop-blur-sm">
         <div className="flex flex-col gap-1 px-4 py-4 md:px-8">
           <Label>Today</Label>
-          <span className="font-mono text-[15px] text-fg">{stats.todayMin} min</span>
+          <span className="tabular-nums text-[15px] text-fg">{stats.todayMin} min</span>
         </div>
         <div className="flex flex-col gap-1 border-l border-line px-4 py-4 md:px-8">
           <Label>This week</Label>
-          <span className="font-mono text-[15px] text-fg">
+          <span className="tabular-nums text-[15px] text-fg">
             {stats.weekMin} min <span className="text-muted-strong">· {stats.weekCount}</span>
           </span>
         </div>
         <div className="flex flex-col gap-1 border-l border-line px-4 py-4 md:px-8">
           <Label>Sessions today</Label>
           <span className="flex min-h-[22px] flex-wrap items-center gap-1">
-            {stats.todays.length === 0 ? <span className="font-mono text-[15px] text-muted-strong">—</span> : null}
+            {stats.todays.length === 0 ? <span className="tabular-nums text-[15px] text-muted-strong">—</span> : null}
             {stats.todays.slice(0, 12).map((s) => (
               <span
                 key={s.id}
@@ -268,15 +268,15 @@ export function FocusView() {
         </div>
       </footer>
 
-      <Sheet open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Timer" description="Changes apply to the next session.">
+      <Sheet open={settingsOpen} onClose={() => setSettingsOpen(false)} title="Timer" description="Changes apply from the next round.">
         <div className="-mt-4 flex flex-col">
-          <Stepper label="Focus" value={focus.work} min={5} max={120} onChange={(work) => updateSettings({ focusSettings: { work } })} />
+          <Stepper label="Focus time" value={focus.work} min={5} max={120} onChange={(work) => updateSettings({ focusSettings: { work } })} />
           <Stepper label="Short break" value={focus.short} min={1} max={30} onChange={(short) => updateSettings({ focusSettings: { short } })} />
           <Stepper label="Long break" value={focus.long} min={5} max={60} onChange={(long) => updateSettings({ focusSettings: { long } })} />
-          <Stepper label="Long break every" value={focus.longEvery} min={2} max={8} unit="×" onChange={(longEvery) => updateSettings({ focusSettings: { longEvery } })} />
+          <Stepper label="Long break after" value={focus.longEvery} min={2} max={8} unit="×" onChange={(longEvery) => updateSettings({ focusSettings: { longEvery } })} />
           <div className="flex items-center justify-between py-4">
-            <span className="text-[15px] text-fg">Start next phase automatically</span>
-            <Switch checked={focus.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label="Start next phase automatically" />
+            <span className="text-[15px] text-fg">Start the next round automatically</span>
+            <Switch checked={focus.autoStart} onChange={(autoStart) => updateSettings({ focusSettings: { autoStart } })} label="Start the next round automatically" />
           </div>
         </div>
       </Sheet>

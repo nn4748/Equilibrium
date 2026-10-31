@@ -43,7 +43,7 @@ export function InstallApp() {
     };
   }, []);
 
-  if (platform === "installed") return <p className="font-mono text-[12px] text-fg">Installed on this device</p>;
+  if (platform === "installed") return <p className="tabular-nums text-[12px] text-fg">Installed on this device</p>;
 
   if (platform === "prompt" && deferred)
     return (

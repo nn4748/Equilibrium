@@ -14,26 +14,23 @@ const CHAPTERS = [
   {
     id: "foundation",
     index: "01",
-    name: "Foundation",
-    title: "Your habits establish the foundation.",
-    body: "Small, consistent actions create structural integrity. Each habit is a member. Placed every day, they hold.",
-    note: ["Piers", "02", "Chord members", "20"],
+    name: "Start small",
+    title: "Every habit is a beam.",
+    body: "Add a few habits you want to keep. Each one becomes a beam in your bridge. Do it every day and the bridge gets stronger.",
   },
   {
     id: "load",
     index: "02",
-    name: "Load",
-    title: "Every responsibility carries weight.",
-    body: "Not every habit matters equally. Give each a load from one to five, and the structure shows exactly where the weight sits.",
-    note: ["Load range", "W1–W5", "Members", "09"],
+    name: "Choose what matters",
+    title: "Some habits matter more.",
+    body: "Mark how important each habit is, from 1 to 5. The important ones count more toward your daily score.",
   },
   {
     id: "balance",
     index: "03",
-    name: "Balance",
-    title: "Consistency creates equilibrium.",
-    body: "When every load is carried, the structure levels. A balanced life is engineered through deliberate action.",
-    note: ["Deflection", "0.00", "Balance", "100"],
+    name: "Stay balanced",
+    title: "Do them all, and it stands level.",
+    body: "Check off your habits each day. When everything is done, your bridge stands straight. Miss a few and it starts to bend.",
   },
 ] as const;
 
@@ -157,15 +154,15 @@ export function Landing() {
             mode="assemble"
             progress={progress}
             shift={wide ? 0.2 : 0}
-            label="A truss bridge assembling itself as you scroll: foundation, load, then balance."
+            label="A bridge that builds itself as you scroll."
             className="absolute inset-0 h-full w-full"
           />
           <div aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-bg via-transparent to-bg/60 md:bg-gradient-to-r md:from-bg md:via-bg/30 md:to-transparent" />
 
           <div data-hero className="absolute inset-0 flex flex-col justify-end px-4 pb-[12svh] md:justify-center md:px-10 md:pb-0">
-            <Label className="mb-6">Personal discipline system</Label>
+            <Label className="mb-6">A simple habit tracker</Label>
             <h1 className="text-mega font-semibold text-fg-strong">Equilibrium</h1>
-            <p className="mt-6 max-w-md text-[18px] leading-snug text-fg md:text-[21px]">Discipline is the architecture of a balanced life.</p>
+            <p className="mt-6 max-w-md text-[18px] leading-snug text-fg md:text-[21px]">Build good habits, one day at a time.</p>
             <div className="mt-10 flex flex-wrap items-center gap-3">
               <MagneticLink href="/today">
                 Enter Equilibrium <ArrowRight className="size-4" strokeWidth={1.5} />
@@ -175,8 +172,7 @@ export function Landing() {
               </a>
             </div>
             <div className="absolute bottom-6 left-4 right-4 hidden items-end justify-between md:left-10 md:right-10 md:flex">
-              <Label>Scroll to assemble</Label>
-              <Label>Pratt truss · 5 panels · 9 members</Label>
+              <Label>Scroll down</Label>
             </div>
           </div>
 
@@ -188,22 +184,14 @@ export function Landing() {
               className="pointer-events-none absolute inset-x-4 bottom-[8svh] opacity-0 md:inset-x-auto md:bottom-auto md:left-10 md:top-1/2 md:w-[420px] md:-translate-y-1/2"
             >
               <div className="flex items-center gap-3">
-                <span className="font-mono text-[11px] text-fg">{c.index}</span>
+                <span className="text-[13px] font-semibold text-fg">{c.index}</span>
                 <span data-rule className="h-px w-10 origin-left bg-fg" />
                 <Label>{c.name}</Label>
               </div>
-              <h2 id={`${c.id}-title`} className="mt-6 text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-[0.98] tracking-[-0.04em] text-fg-strong">
+              <h2 id={`${c.id}-title`} className="mt-6 text-[clamp(2rem,4.4vw,3.5rem)] font-medium leading-[0.98] tracking-[-0.02em] text-fg-strong">
                 {c.title}
               </h2>
               <p className="mt-5 max-w-sm text-[16px] leading-relaxed text-muted-strong">{c.body}</p>
-              <dl className="mt-8 grid max-w-sm grid-cols-2 border-t border-line pt-4">
-                {[0, 2].map((k) => (
-                  <div key={k} className="flex flex-col gap-1">
-                    <dt className="label-tech text-muted-strong">{c.note[k]}</dt>
-                    <dd className="font-mono text-[15px] text-fg">{c.note[k + 1]}</dd>
-                  </div>
-                ))}
-              </dl>
             </article>
           ))}
         </div>
@@ -215,13 +203,13 @@ export function Landing() {
 
       <section aria-labelledby="cta" className="relative border-t border-line px-4 py-[18svh] md:px-10">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-12">
-          <Label data-reveal>04 — Begin</Label>
-          <h2 id="cta" data-reveal className="max-w-5xl text-[clamp(3rem,9vw,8.5rem)] font-semibold leading-[0.9] tracking-[-0.055em] text-fg-strong">
+          <Label data-reveal>Ready?</Label>
+          <h2 id="cta" data-reveal className="max-w-5xl text-[clamp(3rem,9vw,8.5rem)] font-semibold leading-[0.9] tracking-[-0.035em] text-fg-strong">
             Build a life that holds.
           </h2>
           <div data-reveal className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
             <p className="max-w-md text-[17px] leading-relaxed text-muted-strong">
-              Private by design. Everything stays on this device — no account, no tracking. Export whenever you like.
+              Free and private. No account needed. Everything stays on your device.
             </p>
             <MagneticLink href="/today">
               Enter Equilibrium <ArrowRight className="size-4" strokeWidth={1.5} />
@@ -233,8 +221,8 @@ export function Landing() {
       <footer className="border-t border-line px-4 py-8 md:px-10">
         <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-4">
           <Wordmark />
-          <p className="font-mono text-[11px] text-muted-strong">Local-first · Your data never leaves this browser</p>
-          <p className="font-mono text-[11px] text-muted-strong">
+          <p className="text-[13px] text-muted-strong">Your data stays on your device</p>
+          <p className="text-[13px] text-muted-strong">
             Made by <span className="text-fg">Nourah Aleissa</span>
           </p>
         </div>

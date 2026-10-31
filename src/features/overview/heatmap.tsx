@@ -86,13 +86,13 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
           <IconButton label="Previous year" size="sm" disabled={year <= firstYear} onClick={() => setYear(year - 1)}>
             <ChevronLeft className="size-4" strokeWidth={1.5} />
           </IconButton>
-          <span className="w-12 text-center font-mono text-[14px] text-fg">{year}</span>
+          <span className="w-12 text-center tabular-nums text-[14px] text-fg">{year}</span>
           <IconButton label="Next year" size="sm" disabled={year >= thisYear} onClick={() => setYear(year + 1)}>
             <ChevronRight className="size-4" strokeWidth={1.5} />
           </IconButton>
         </div>
-        <span className="font-mono text-[12px] text-muted-strong">
-          {yearTotals.perfect} balanced / {yearTotals.tracked} tracked days
+        <span className="tabular-nums text-[12px] text-muted-strong">
+          {yearTotals.perfect} perfect days out of {yearTotals.tracked}
         </span>
       </div>
 
@@ -109,13 +109,13 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
           className="block outline-offset-4"
         >
           {monthCols.map((m) => (
-            <text key={m.label} x={LEFT + m.col * STEP} y={10} className="fill-muted-strong font-mono" fontSize={9}>
+            <text key={m.label} x={LEFT + m.col * STEP} y={10} className="fill-muted-strong tabular-nums" fontSize={11}>
               {m.label}
             </text>
           ))}
           {dayLabels.map((d, i) =>
             d ? (
-              <text key={i} x={0} y={TOP + i * STEP + CELL - 2} className="fill-muted-strong font-mono" fontSize={9}>
+              <text key={i} x={0} y={TOP + i * STEP + CELL - 2} className="fill-muted-strong tabular-nums" fontSize={11}>
                 {d}
               </text>
             ) : null,
@@ -146,16 +146,16 @@ export function Heatmap({ history, weekStartsOn }: { history: History; weekStart
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-line pt-3">
-        <p aria-live="polite" className="min-h-5 font-mono text-[12px] text-fg">
+        <p aria-live="polite" className="min-h-5 tabular-nums text-[12px] text-fg">
           {active ? (
             <>
               {formatKey(active, { weekday: "short", day: "numeric", month: "short" })} <span className="text-muted-strong">— {describeDay(activeMetrics)}</span>
             </>
           ) : (
-            <span className="text-muted-strong">Select a day for details.</span>
+            <span className="text-muted-strong">Tap a day to see details.</span>
           )}
         </p>
-        <div className="flex items-center gap-2" aria-label="Legend: balance score">
+        <div className="flex items-center gap-2" aria-label="Legend">
           <Label className="mr-1">Less</Label>
           {HEAT_LABELS.map((l, i) => (
             <span key={l} title={l} className="size-[11px]" style={{ background: `var(--heat-${i})` }} />

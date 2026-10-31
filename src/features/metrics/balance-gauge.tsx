@@ -70,7 +70,7 @@ export function BalanceGauge({
         {[0, 20, 40, 60, 80, 100].map((t) => {
           const [x, y] = polar(t, R - 18);
           return (
-            <text key={t} x={x} y={y} textAnchor="middle" dominantBaseline="middle" className="fill-muted-strong font-mono" fontSize={7}>
+            <text key={t} x={x} y={y} textAnchor="middle" dominantBaseline="middle" className="fill-muted-strong tabular-nums" fontSize={9}>
               {t}
             </text>
           );
@@ -89,8 +89,8 @@ export function BalanceGauge({
       <div className={cn("flex items-end justify-between border-t border-line pt-4", compact ? "mt-2" : "mt-3")}>
         <div className="flex flex-col gap-1">
           <Label>Today</Label>
-          <span className={cn("font-mono font-tabular leading-none tracking-[-0.04em] text-fg-strong", compact ? "text-[2.25rem]" : "text-[3rem]")}>
-            {today === null ? "—" : <AnimatedNumber value={value} />}
+          <span className={cn("tabular-nums font-tabular leading-none tracking-[-0.02em] text-fg-strong", compact ? "text-[2.25rem]" : "text-[3rem]")}>
+            {today === null ? "—" : (<><AnimatedNumber value={value} /><span className="text-[0.5em] text-muted-strong">%</span></>)}
           </span>
         </div>
         <dl className="flex gap-6 pb-1">
@@ -99,18 +99,18 @@ export function BalanceGauge({
               <svg viewBox="0 0 8 8" className="size-2" aria-hidden>
                 <path d="M4 7 0.5 1h7z" fill="currentColor" />
               </svg>
-              7-day
+              Last 7 days
             </dt>
-            <dd className="font-mono text-[15px] font-tabular text-fg">{fmt(week)}</dd>
+            <dd className="tabular-nums text-[15px] font-tabular text-fg">{fmt(week)}</dd>
           </div>
           <div className="flex flex-col items-end gap-1">
             <dt className="label-tech flex items-center gap-1.5 text-muted-strong">
               <svg viewBox="0 0 8 8" className="size-2" aria-hidden>
                 <path d="M4 7 0.5 1h7z" fill="none" stroke="currentColor" />
               </svg>
-              30-day
+              Last 30 days
             </dt>
-            <dd className="font-mono text-[15px] font-tabular text-fg">{fmt(month)}</dd>
+            <dd className="tabular-nums text-[15px] font-tabular text-fg">{fmt(month)}</dd>
           </div>
         </dl>
       </div>

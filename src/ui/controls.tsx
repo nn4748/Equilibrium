@@ -104,22 +104,19 @@ export function Switch({
 const WEIGHTS = [1, 2, 3, 4, 5] as const;
 export type WeightValue = (typeof WEIGHTS)[number];
 
-const weightNames: Record<WeightValue, string> = {
-  1: "Minimal",
-  2: "Light",
-  3: "Standard",
-  4: "Heavy",
-  5: "Critical",
+export const weightNames: Record<WeightValue, string> = {
+  1: "A little",
+  2: "Somewhat",
+  3: "Important",
+  4: "Very important",
+  5: "Top priority",
 };
 
-/**
- * Importance as structural load: five bars of increasing height,
- * read like a load diagram. Single-choice radiogroup.
- */
+/** Importance 1–5 as five bars of increasing height. Single-choice radiogroup. */
 export function WeightStepper({
   value,
   onChange,
-  label = "Load weight",
+  label = "Importance",
   className,
 }: {
   value: WeightValue;
@@ -160,10 +157,7 @@ export function WeightStepper({
           );
         })}
       </div>
-      <div className="flex flex-col gap-1 pb-0.5">
-        <span className="font-mono text-data font-tabular text-fg">W{value}.0</span>
-        <span className="label-tech text-muted-strong">{weightNames[value]}</span>
-      </div>
+      <span className="pb-0.5 text-[15px] font-medium text-fg">{weightNames[value]}</span>
     </div>
   );
 }
@@ -202,7 +196,7 @@ export function WeekdayPicker({
             aria-label={WEEKDAY_NAMES[day]}
             onClick={() => toggle(day)}
             className={cn(
-              "flex h-11 flex-col items-center justify-center border-b border-r border-line font-mono text-[12px] transition-colors duration-200 ease-precise",
+              "flex h-11 flex-col items-center justify-center border-b border-r border-line tabular-nums text-[12px] transition-colors duration-200 ease-precise",
               on ? "bg-fg text-bg" : "text-muted-strong hover:bg-surface hover:text-fg",
             )}
           >
