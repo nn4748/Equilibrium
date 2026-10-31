@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { PanelLeftClose, PanelLeftOpen, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useUI } from "@/state/ui-store";
 import { IconButton } from "@/ui/button";
+import { Kbd } from "@/ui/typography";
 import { NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
 
@@ -16,6 +17,7 @@ export function Sidebar({ className }: { className?: string }) {
   const active = navFor(pathname)?.href;
   const collapsed = useUI((s) => s.sidebarCollapsed);
   const toggle = useUI((s) => s.toggleSidebar);
+  const openPalette = useUI((s) => s.setPaletteOpen);
 
   return (
     <aside
@@ -31,7 +33,25 @@ export function Sidebar({ className }: { className?: string }) {
         <Wordmark compact={collapsed} />
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-6">
+      <div className={cn("pt-4", collapsed ? "flex justify-center" : "px-4")}>
+        {collapsed ? (
+          <IconButton label="Search (⌘K)" onClick={() => openPalette(true)}>
+            <Search className="size-4" strokeWidth={1.5} />
+          </IconButton>
+        ) : (
+          <button
+            type="button"
+            onClick={() => openPalette(true)}
+            className="flex h-10 w-full items-center gap-3 border border-line px-3 text-[13px] text-muted-strong transition-colors hover:border-muted hover:text-fg"
+          >
+            <Search className="size-4" strokeWidth={1.5} aria-hidden />
+            <span className="flex-1 text-left">Search</span>
+            <Kbd>⌘K</Kbd>
+          </button>
+        )}
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-4">
         <ul className="flex flex-col">
           {NAV.map((item) => {
             const isActive = item.href === active;

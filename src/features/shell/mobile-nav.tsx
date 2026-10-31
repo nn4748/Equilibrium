@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "motion/react";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, Search } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useUI } from "@/state/ui-store";
+import { IconButton } from "@/ui/button";
 import { Sheet } from "@/ui/overlay";
 import { MOBILE_PRIMARY, NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
@@ -15,12 +16,16 @@ const secondary = NAV.filter((n) => !(MOBILE_PRIMARY as readonly string[]).inclu
 
 /** Top bar on phones. */
 export function MobileTopBar({ className }: { className?: string }) {
+  const openPalette = useUI((s) => s.setPaletteOpen);
   return (
     <header className={cn("sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md", className)}>
       <div className="flex h-14 items-center justify-between gap-3 px-4 pt-[env(safe-area-inset-top)]">
         <Wordmark />
         <div className="flex items-center gap-1">
-          <DateReadout className="hidden xs:flex" />
+          <DateReadout className="mr-2 hidden xs:flex" />
+          <IconButton label="Search" onClick={() => openPalette(true)}>
+            <Search className="size-4" strokeWidth={1.5} />
+          </IconButton>
           <ThemeToggle className="-mr-2" />
         </div>
       </div>

@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { ModulePending } from "@/features/shell/module-pending";
+import { JournalView } from "@/features/journal/journal-view";
 
 export const metadata: Metadata = { title: "Journal" };
 
 export default function Page() {
-  return (
-    <ModulePending href="/journal" title="Journal" empty="No entries yet.">
-      Your daily notes will be listed here. They stay on this device.
-    </ModulePending>
-  );
+  return <JournalView />;
 }
