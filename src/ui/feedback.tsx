@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
 import { CornerMarks, Label } from "./typography";
 
-/** Loading placeholder. Hairline outline with a slow luminance scan. */
+/** Loading placeholder. */
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div aria-hidden className={cn("relative overflow-hidden bg-surface", className)}>
@@ -16,10 +16,6 @@ export function Skeleton({ className }: { className?: string }) {
   );
 }
 
-/**
- * Empty state drawn as an unbuilt bay: a dashed frame with registration
- * marks, a reference code and an optional action.
- */
 export function EmptyState({
   code,
   title,
@@ -27,7 +23,7 @@ export function EmptyState({
   action,
   className,
 }: {
-  code: string;
+  code?: string;
   title: string;
   children?: React.ReactNode;
   action?: React.ReactNode;
@@ -41,7 +37,7 @@ export function EmptyState({
         <circle cx="2" cy="46" r="1.5" fill="currentColor" />
         <circle cx="118" cy="46" r="1.5" fill="currentColor" />
       </svg>
-      <Label>{code}</Label>
+      {code ? <Label>{code}</Label> : null}
       <div className="flex max-w-md flex-col gap-2">
         <h2 className="text-heading font-medium text-fg">{title}</h2>
         {children ? <div className="text-muted-strong">{children}</div> : null}

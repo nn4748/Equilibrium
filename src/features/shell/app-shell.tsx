@@ -5,10 +5,7 @@ import { useUI } from "@/state/ui-store";
 import { BottomNav, MobileTopBar } from "./mobile-nav";
 import { Sidebar } from "./sidebar";
 
-/**
- * Application frame. Phones get a top bar + bottom navigation; tablet and
- * desktop get the sidebar. The two layouts are separate, not a shrunk copy.
- */
+/** Phones: top bar + bottom navigation. Tablet and up: sidebar. */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const hydrate = useUI((s) => s.hydrate);
   useEffect(hydrate, [hydrate]);

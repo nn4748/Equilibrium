@@ -13,11 +13,11 @@ export default function RouteError({ error, reset }: { error: Error & { digest?:
     <main className="flex min-h-[70dvh] items-center justify-center px-4">
       <div className="relative flex max-w-md flex-col gap-5 p-10">
         <CornerMarks />
-        <Label>Fault / {error.digest ?? "runtime"}</Label>
-        <h1 className="text-title font-medium text-fg-strong">A member failed to load.</h1>
-        <p className="text-muted-strong">Your data is stored locally and has not been changed. Retry, or return to today.</p>
+        <Label>Error{error.digest ? ` · ${error.digest}` : ""}</Label>
+        <h1 className="text-title font-medium text-fg-strong">Something went wrong</h1>
+        <p className="text-muted-strong">Your data is saved on this device and hasn’t been affected.</p>
         <div className="flex gap-3">
-          <Button onClick={reset}>Retry</Button>
+          <Button onClick={reset}>Try again</Button>
           <ButtonLink href="/today" variant="secondary">
             Today
           </ButtonLink>

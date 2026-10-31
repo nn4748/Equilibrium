@@ -8,7 +8,6 @@ import { formatCoordinate, formatStamp } from "@/lib/format";
 import { useTheme } from "@/state/theme";
 import { IconButton } from "@/ui/button";
 
-/** The wordmark: a three-member truss glyph beside the logotype. */
 export function Wordmark({ compact = false, className }: { compact?: boolean; className?: string }) {
   return (
     <Link href="/" aria-label="Equilibrium — home" className={cn("inline-flex items-center gap-3 text-fg-strong", className)}>
@@ -32,7 +31,7 @@ export function ThemeToggle({ className }: { className?: string }) {
   );
 }
 
-/** Live date coordinate. Renders after mount to avoid hydration drift. */
+/** Current date. Rendered after mount so server and client markup match. */
 export function DateReadout({ className, stacked = false }: { className?: string; stacked?: boolean }) {
   const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {

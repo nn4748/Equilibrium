@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { X } from "lucide-react";
-import { CornerMarks, Label } from "@/ui/typography";
+import { Label } from "@/ui/typography";
 
 export const metadata: Metadata = { title: "Focus" };
 
-/** Full-screen frame for Focus mode, outside the app shell. Timer arrives in phase 5. */
 export default function FocusPage() {
   return (
     <main className="relative flex min-h-dvh flex-col bg-bg">
@@ -19,12 +18,9 @@ export default function FocusPage() {
           <X className="size-5" strokeWidth={1.25} />
         </Link>
       </header>
-      <div className="flex flex-1 items-center justify-center px-4">
-        <div className="relative flex flex-col items-center gap-6 px-10 py-14 md:px-20">
-          <CornerMarks />
-          <p className="font-mono text-[clamp(4rem,16vw,10rem)] font-light leading-none tracking-[-0.06em] text-fg-strong font-tabular">25:00</p>
-          <Label>Timer module — phase 5</Label>
-        </div>
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center">
+        <h1 className="text-title font-medium text-fg-strong">Focus</h1>
+        <p className="text-muted-strong">Focus sessions aren&apos;t available yet.</p>
       </div>
     </main>
   );

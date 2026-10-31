@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { useHydrated } from "@/lib/hooks";
 import { ArrowRight, Plus } from "lucide-react";
 import { useTheme } from "@/state/theme";
 import { Button, IconButton } from "@/ui/button";
@@ -30,12 +31,14 @@ function Section({ index, title, children }: { index: number; title: string; chi
 /** Reads the live token values so the specimen always reflects the active theme. */
 function useTokenValues() {
   const resolved = useTheme((s) => s.resolved);
-  const [values, setValues] = useState<Record<string, string>>({});
-  useEffect(() => {
+  const hydrated = useHydrated();
+  // `resolved` is applied to <html> before the store updates, so reading here is current.
+  return useMemo<Record<string, string>>(() => {
+    if (!hydrated) return {};
     const style = getComputedStyle(document.documentElement);
-    setValues(Object.fromEntries(TOKENS.map((t) => [t, style.getPropertyValue(`--${t}`).trim().toUpperCase()])));
-  }, [resolved]);
-  return values;
+    return Object.fromEntries(TOKENS.map((t) => [t, style.getPropertyValue(`--${t}`).trim().toUpperCase()]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recompute when the theme changes
+  }, [hydrated, resolved]);
 }
 
 export function Specimen() {
@@ -50,13 +53,14 @@ export function Specimen() {
 
   return (
     <Page>
-      <PageHeader index={0} section="System" title="Design system" meta="Spec sheet / rev A" />
+      <PageHeader index={0} section="System" title="Design system"  />
 
       <Section index={1} title="Typography">
         <div className="flex flex-col gap-10">
-          <div className="relative overflow-hidden">
-            <p className="text-mega font-semibold text-fg-strong">Equilibrium</p>
-            <Label className="mt-3 block">Mega — Inter Tight 600 / −0.055em / fluid 56–192px</Label>
+          <div>
+            {/* Sized to the column here; on the landing page mega spans the viewport. */}
+            <p className="text-mega font-semibold text-fg-strong [font-size:clamp(3rem,9vw,8.5rem)]">Equilibrium</p>
+            <Label className="mt-6 block">Mega — Inter Tight 600 / −0.055em / fluid 56–192px</Label>
           </div>
           <div>
             <p className="text-display font-medium text-fg-strong">Build a life that holds.</p>
@@ -147,7 +151,7 @@ export function Specimen() {
               <Plus className="size-3.5" strokeWidth={1.5} /> Small
             </Button>
             <Button disabled>Disabled</Button>
-            <IconButton label="Add member">
+            <IconButton label="Add habit">
               <Plus className="size-4" strokeWidth={1.5} />
             </IconButton>
           </div>
@@ -161,7 +165,7 @@ export function Specimen() {
 
       <Section index={5} title="Inputs & controls">
         <div className="grid gap-10 md:grid-cols-2">
-          <Field label="Member title" hint="Short and specific: what you will do." meta={`${title.length}/60`}>
+          <Field label="Name" hint="Keep it short and specific." meta={`${title.length}/60`}>
             {(p) => <Input {...p} maxLength={60} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Read 20 pages" />}
           </Field>
           <Field label="Category" error="A category is required.">
@@ -177,7 +181,7 @@ export function Specimen() {
             )}
           </Field>
           <Field label="Description" className="md:col-span-2">
-            {(p) => <Textarea {...p} rows={3} placeholder="Optional context for this member." />}
+            {(p) => <Textarea {...p} rows={3} placeholder="Optional" />}
           </Field>
           <div className="flex flex-col gap-3">
             <Label>Schedule</Label>
@@ -216,9 +220,8 @@ export function Specimen() {
         <Dialog
           open={dialog}
           onClose={() => setDialog(false)}
-          code="SYS / CONFIRM"
-          title="Remove member?"
-          description="Its history is kept unless you delete permanently."
+          title="Archive habit?"
+          description="It will be hidden from Today. Its history is kept."
           footer={
             <>
               <Button variant="ghost" onClick={() => setDialog(false)}>
@@ -228,12 +231,11 @@ export function Specimen() {
             </>
           }
         >
-          <p className="text-[14px] text-muted-strong">Dialogs trap focus, close on Escape or backdrop, and restore focus to the trigger.</p>
+          <p className="text-[14px] text-muted-strong">You can restore it from Habits at any time.</p>
         </Dialog>
         <Sheet
           open={sheet}
           onClose={() => setSheet(false)}
-          code="HB / NEW MEMBER"
           title="New habit"
           footer={
             <>
@@ -245,12 +247,12 @@ export function Specimen() {
           }
         >
           <div className="flex flex-col gap-8">
-            <Field label="Member title">{(p) => <Input {...p} data-autofocus placeholder="Read 20 pages" />}</Field>
+            <Field label="Name">{(p) => <Input {...p} data-autofocus placeholder="Read 20 pages" />}</Field>
             <div className="flex flex-col gap-3">
               <Label>Load weight</Label>
               <WeightStepper value={weight} onChange={setWeight} />
             </div>
-            <p className="text-[14px] text-muted-strong">Bottom sheet on phones — drag the handle down to dismiss. Side panel from tablet up.</p>
+            
           </div>
         </Sheet>
       </Section>
@@ -272,8 +274,8 @@ export function Specimen() {
               <Label>Registration marks</Label>
             </div>
           </div>
-          <EmptyState code="Empty / no members" title="No structure yet." className="border border-dashed border-line md:col-span-2">
-            Empty states read as an unbuilt bay with a direct next action.
+          <EmptyState title="No habits yet." className="border border-dashed border-line md:col-span-2">
+            Habits you create will be listed here.
           </EmptyState>
         </div>
       </Section>

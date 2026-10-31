@@ -7,14 +7,13 @@ import { Ellipsis } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { useUI } from "@/state/ui-store";
 import { Sheet } from "@/ui/overlay";
-import { Label } from "@/ui/typography";
 import { MOBILE_PRIMARY, NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
 
 const primary = MOBILE_PRIMARY.map((href) => NAV.find((n) => n.href === href)!);
 const secondary = NAV.filter((n) => !(MOBILE_PRIMARY as readonly string[]).includes(n.href));
 
-/** Slim top bar on phones: wordmark, coordinate and theme toggle. */
+/** Top bar on phones. */
 export function MobileTopBar({ className }: { className?: string }) {
   return (
     <header className={cn("sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md", className)}>
@@ -29,7 +28,7 @@ export function MobileTopBar({ className }: { className?: string }) {
   );
 }
 
-/** Bottom navigation: four primary sections plus a "More" sheet. 64px targets. */
+/** Bottom navigation: four primary sections plus a "More" sheet. */
 export function BottomNav({ className }: { className?: string }) {
   const pathname = usePathname();
   const active = navFor(pathname)?.href;
@@ -90,8 +89,8 @@ export function BottomNav({ className }: { className?: string }) {
         </ul>
       </nav>
 
-      <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title="Sections" code="IDX / SECONDARY">
-        <ul className="-mx-6 border-t border-line">
+      <Sheet open={moreOpen} onClose={() => setMoreOpen(false)} title="More">
+        <ul className="-mx-6 -mt-6">
           {secondary.map((item) => {
             const Icon = item.icon;
             const isActive = item.href === active;
@@ -114,10 +113,6 @@ export function BottomNav({ className }: { className?: string }) {
             );
           })}
         </ul>
-        <div className="mt-8 flex items-center justify-between">
-          <Label>Coordinate</Label>
-          <DateReadout />
-        </div>
       </Sheet>
     </>
   );

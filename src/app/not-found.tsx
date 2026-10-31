@@ -3,14 +3,14 @@ import { CornerMarks, Label } from "@/ui/typography";
 
 export default function NotFound() {
   return (
-    <main className="flex min-h-dvh items-center justify-center bg-grid px-4">
-      <div className="relative flex max-w-md flex-col gap-5 bg-bg p-10">
+    <main className="flex min-h-dvh items-center justify-center px-4">
+      <div className="relative flex max-w-md flex-col gap-5 p-10">
         <CornerMarks />
-        <Label>Ref 404 / no such member</Label>
-        <h1 className="text-title font-medium text-fg-strong">This bay was never built.</h1>
-        <p className="text-muted-strong">The page you requested does not exist.</p>
+        <Label>404</Label>
+        <h1 className="text-title font-medium text-fg-strong">Page not found</h1>
+        <p className="text-muted-strong">The page you’re looking for doesn’t exist or has moved.</p>
         <div>
-          <ButtonLink href="/today">Return to today</ButtonLink>
+          <ButtonLink href="/today">Go to Today</ButtonLink>
         </div>
       </div>
     </main>

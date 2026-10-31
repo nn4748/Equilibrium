@@ -1,15 +1,11 @@
 import { cn } from "@/lib/cn";
-import { SectionIndex, Ticks } from "./typography";
+import { SectionIndex } from "./typography";
 
-/** Page container: 16px gutters on phones, widening with the viewport. */
 export function Page({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mx-auto w-full max-w-[1440px] px-4 pb-16 pt-6 md:px-8 md:pt-10 lg:px-12", className)} {...props} />;
 }
 
-/**
- * Page header: section index, oversized title, optional meta readout and
- * actions, closed by a measured rule.
- */
+/** Section index, title, optional meta and actions. */
 export function PageHeader({
   index,
   section,
@@ -26,7 +22,7 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn("flex flex-col gap-6 pb-8 md:pb-12", className)}>
+    <header className={cn("mb-8 flex flex-col gap-6 border-b border-line pb-8 md:mb-12 md:pb-10", className)}>
       <div className="flex items-center justify-between gap-4">
         <SectionIndex index={index}>{section}</SectionIndex>
         {meta ? <div className="label-tech text-muted-strong">{meta}</div> : null}
@@ -35,7 +31,6 @@ export function PageHeader({
         <h1 className="text-display font-medium text-fg-strong">{title}</h1>
         {actions ? <div className="flex flex-wrap items-center gap-3">{actions}</div> : null}
       </div>
-      <Ticks count={48} major={8} />
     </header>
   );
 }

@@ -10,10 +10,7 @@ import { IconButton } from "@/ui/button";
 import { NAV, navFor } from "./nav";
 import { DateReadout, ThemeToggle, Wordmark } from "./parts";
 
-/**
- * Desktop/tablet navigation. Expanded: numbered index + label.
- * Collapsed: a rail of section numbers — no icons, like a drawing index.
- */
+/** Sidebar for tablet and desktop. Collapses to a rail of section numbers. */
 export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
   const active = navFor(pathname)?.href;
@@ -35,7 +32,6 @@ export function Sidebar({ className }: { className?: string }) {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-6">
-        {!collapsed ? <p className="label-tech mb-3 px-6 text-muted">Index</p> : null}
         <ul className="flex flex-col">
           {NAV.map((item) => {
             const isActive = item.href === active;

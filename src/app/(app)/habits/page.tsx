@@ -5,8 +5,8 @@ export const metadata: Metadata = { title: "Habits" };
 
 export default function Page() {
   return (
-    <ModulePending href="/habits" title="Habits" phase={3}>
-      Create, schedule, weight and reorder the members of your structure.
+    <ModulePending href="/habits" title="Habits" empty="No habits yet.">
+      Habits you create will be listed here, in the order you choose.
     </ModulePending>
   );
 }

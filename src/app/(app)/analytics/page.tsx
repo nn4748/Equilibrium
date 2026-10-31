@@ -5,8 +5,8 @@ export const metadata: Metadata = { title: "Analytics" };
 
 export default function Page() {
   return (
-    <ModulePending href="/analytics" title="Analytics" phase={5}>
-      Trends, consistency and time-of-day patterns — calculated only from your recorded data.
+    <ModulePending href="/analytics" title="Analytics" empty="Not enough data yet.">
+      Charts appear after a few days of tracking.
     </ModulePending>
   );
 }

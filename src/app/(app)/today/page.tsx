@@ -5,8 +5,8 @@ export const metadata: Metadata = { title: "Today" };
 
 export default function Page() {
   return (
-    <ModulePending href="/today" title="Today" phase={3}>
-      Scheduled habits, one-tap completion and the daily balance score arrive with the core habit features.
+    <ModulePending href="/today" title="Today" empty="Nothing scheduled today.">
+      Habits scheduled for today will be listed here.
     </ModulePending>
   );
 }
